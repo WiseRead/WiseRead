@@ -1,0 +1,12 @@
+.nav-x-padding {
+  padding-left: var(--nav-x-padding);
+  padding-right: var(--nav-x-padding);
+}
+
+.top-width {
+  @screen md {
+    width: 35rem;
+
+    @apply mx-auto;
+  }
+}

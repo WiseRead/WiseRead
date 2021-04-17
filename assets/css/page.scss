@@ -1,0 +1,92 @@
+h1, h2, h3, h4, h5, h6 {
+  @extend %headings !optional;
+}
+
+.page-x-padding {
+  padding-left: var(--nav-x-padding);
+  padding-right: var(--nav-x-padding);
+
+  @screen lg {
+    @apply mx-2;
+  }
+}
+
+.page {
+  @extend .page-x-padding;
+
+  @apply py-8 font-fira-sans;
+
+  %headings {
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  @for $index from 1 through 6 {
+    &:not(.custom) {
+      h#{$index}:not(.custom) {
+        margin-top: 1.6rem;
+        margin-bottom: 0.6rem;
+      }
+
+      & > h#{$index}:not(.custom):first-child {
+        margin-top: 0;
+        margin-bottom: 1.7rem;
+      }
+    }
+  }
+
+  h1 {
+    font-size: 2.02rem;
+    font-weight: 500;
+
+    @screen sm2 {
+      font-size: 2.1rem;
+    }
+  }
+
+  h2 {
+    font-size: 1.55rem;
+
+    @screen sm2 {
+      font-size: 1.55rem;
+    }
+  }
+
+  h3 {
+    font-size: 1.22rem;
+
+    @screen sm2 {
+      font-size: 1.35rem;
+    }
+  }
+
+  p {
+    line-height: 1.7;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  .marked-link {
+    @apply border rounded font-mono;
+    padding: 0.12rem 0.32rem;
+  }
+
+  .marked-block {
+    @apply block my-3 py-3 px-4 bg-gray-200 rounded-sm break-all;
+    @apply transition-colors duration-cmt;
+    line-height: 1.626rem;
+
+    .dark-mode & {
+      @apply bg-gray-800;
+      background-color: #3d4758;
+    }
+  }
+
+  &.doc-page {
+    @screen lg {
+      max-width: 59rem;
+    }
+  }
+}

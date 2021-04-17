@@ -1,0 +1,51 @@
+:root {
+  /* color-mode */
+  /* (Should be equal to tailwind transitionDuration 'cmt') */
+  --color-mode-transition-time: 0.19s;
+
+  /* page */
+  --page-background-color: rgb(255, 255, 255);
+  --dark--page-background-color: rgb(43 45 45);
+  --main-text-color: #2c3e50;
+
+  /* link */
+  --link-color: #4e64e2;
+
+  /* topBlock */
+  --topblock-color: #989898;
+  --topblock-title-color: #8b8b8b;
+  --topblock-border-color: #d2d2d2;
+
+  /* link button */
+  --link-button-color: #fff;
+  --link-button-background-color: #7b94a2;
+
+  /* nav-padding */
+  --nav-x-padding: 0.75rem;
+
+  @screen md {
+    --nav-x-padding: 1rem;
+  }
+
+  @screen lg {
+    --nav-x-padding: 2rem;
+  }
+}
+
+.dark-mode {
+  /* page */
+  --page-background-color: var(--dark--page-background-color);
+  --main-text-color: #dadada;
+
+  /* link */
+  --link-color: #8290de;
+
+  /* topBlock */
+  --topblock-color: #b5b4b4;
+  --topblock-title-color: #d1cfcf;
+  --topblock-border-color: #c0c0c0;
+
+  /* link button */
+  --link-button-color: #d4d4d4;
+  --link-button-background-color: #707070;
+}

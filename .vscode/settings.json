@@ -1,0 +1,41 @@
+{
+    // Insert a final new line at the end of the file when saving it
+    "files.insertFinalNewline": true,
+
+    // Trim Trailing Whitespace
+    "files.trimTrailingWhitespace": true,
+    "[markdown]": {
+        // Don't trim trailing whitespace in markdown
+        "files.trimTrailingWhitespace": true
+    },
+
+    // Default tab size
+    "editor.tabSize": 2,
+
+    // To use "Debugger for Chrome" extension
+    // See https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome
+    "debug.javascript.usePreview": false,
+
+    // Enable ESLint as a formatter
+    "eslint.format.enable": true,
+
+    // Disable vscode's default CSS linting (instead we use Stylelint)
+    "css.validate": false,
+    "scss.validate": false,
+    "less.validate": false,
+    "vetur.validation.style": false,
+
+    // Disable all vetur formatters except the css formatters
+    // (Vetur css formatter is sometimes better than Stylelint,
+    //  we can use it by: 'Format Document with...' > 'vetur')
+    "vetur.format.defaultFormatter.html": "none",
+    "vetur.format.defaultFormatter.js": "none",
+    "vetur.format.defaultFormatter.ts": "none",
+
+    // Auto fix on save
+    // (Equivalent to running the command 'Fix all auto-fixable problems')
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.fixAll.stylelint": true
+    }
+}
