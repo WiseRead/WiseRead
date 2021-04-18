@@ -69,7 +69,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .marked-link {
-    @apply border rounded font-mono;
+    @apply border rounded font-mono break-all;
     padding: 0.12rem 0.32rem;
   }
 
