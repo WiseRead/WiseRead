@@ -36,7 +36,7 @@
 
     <h2>Real examples</h2>
     <p>
-      <span v-for="exam of realExamples" :key="exam">
+      <span v-for="exam of realExamples" :key="exam.link">
         <a :href="exam.link">{{ exam.exampleName }}</a>
         <br />
       </span>
