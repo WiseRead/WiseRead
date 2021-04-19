@@ -17,6 +17,10 @@ module.exports = {
   plugins: [
   ],
 
+  ignorePatterns: [
+    'static/dep'
+  ],
+
   rules: {
     /*
      * eslint rules
