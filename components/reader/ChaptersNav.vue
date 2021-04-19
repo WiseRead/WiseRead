@@ -13,8 +13,8 @@
         <IconLeftArrow class="arrow" />
       </div>
       <div class="chapter-title">
-        <span v-if="chaptersNumber > 1" class="opacity-50">{{ currChapterNumber }}.</span>
-        {{ chapterName }}
+        <div v-if="chaptersNumber > 1" class="chapter-number">{{ currChapterNumber }}</div>
+        <div>{{ chapterName }}</div>
       </div>
       <div
         class="arrow-area"
@@ -223,6 +223,22 @@ export default {
 
   .dark-mode & {
     @apply bg-gray-700;
+  }
+}
+
+.chapter-number {
+  @apply flex items-center justify-center rounded-md text-center;
+  @apply text-white bg-gray-600 bg-opacity-100 font-semibold font-mono select-none;
+  @apply transition-colors duration-cmt;
+
+  font-size: 86%;
+  margin-right: 0.5rem;
+  padding: 0.01rem 0.42rem;
+
+  .dark-mode & {
+    @apply text-gray-700 bg-gray-500;
+    background-color: #8f9bab;
+    color: #414b5c;
   }
 }
 </style>
