@@ -14,7 +14,7 @@ export default {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Read comic/manga/manhwa with WiseRead!' }
+      { hid: 'description', name: 'description', content: 'Read Online/Offline comic with WiseRead web reader' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' }
@@ -29,10 +29,6 @@ export default {
     '~/assets/css/transition.scss',
     '~/assets/css/page.scss',
   ],
-
-  styleResources: {
-    scss: ['./assets/css/*.scss']
-  },
 
   purgeCSS: {
     // purgeCSS auto removes unused css. since we are adding dark selector classes
