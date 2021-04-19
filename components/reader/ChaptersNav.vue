@@ -201,7 +201,7 @@ export default {
 }
 
 .chapter-title {
-  @apply font-semibold font-sans truncate select-none;
+  @apply flex items-center font-semibold font-sans truncate select-none;
   font-size: 0.9rem;
 
   @screen sm {
