@@ -93,7 +93,7 @@ img {
     border-color: transparent;
 
     @screen ph {
-      @apply my-11;
+      @apply my-8.5;
     }
   }
 
