@@ -96,7 +96,7 @@ export default {
         const chapterLinks = wrLink.chapterLinks
 
         if (chapterLinks.length > 0) {
-          this.loadDownloadLinks(chapterLinks, false)
+          this.loadDownloadLinks(chapterLinks, false, wrLink.cstart ?? 0)
         }
       }
       catch (err) {
@@ -187,8 +187,9 @@ export default {
     /**
      * @param {ChapterLink[]} inChapterLinks
      * @param {boolean} inTryUseFileName
+     * @param {number=} inStartChapter
      */
-    async loadDownloadLinks (inChapterLinks, inTryUseFileName) {
+    async loadDownloadLinks (inChapterLinks, inTryUseFileName, inStartChapter = 0) {
       console.log(`Download: ${JSON.stringify(inChapterLinks)}`)
 
       const chapterLinks = _.clone(inChapterLinks)
@@ -204,7 +205,7 @@ export default {
 
       const tryUseFileName = inTryUseFileName || anyChapterNameIsMissing
       const comicSource = new ComicSource_DirectLinks({ chapterLinks, tryUseFileName })
-      this.updateStoreChapters(comicSource)
+      this.updateStoreChapters(comicSource, inStartChapter)
     },
 
     /**
@@ -225,10 +226,12 @@ export default {
 
     /**
      * @param {ComicSource} comicSource
+     * @param {number} startChapter
      */
-    updateStoreChapters (comicSource) {
+    updateStoreChapters (comicSource, startChapter = 0) {
       this.$store.dispatch('initChaptersAndLoadFirstAsync', {
         comicSource: comicSource,
+        startChapter: startChapter,
         onChapterLoadingError: this.onChapterLoadingError
       })
     },

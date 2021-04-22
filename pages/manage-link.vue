@@ -67,6 +67,21 @@
 
     <div>
       <h2 class="custom mt-14">Chapters</h2>
+      <div v-if="chapterLinks.length > 1 || cstart > 1" id="cstartArea" class="mt-3 mb-2">
+        Start reader at chapter (first chapter by default):
+        <div>
+          <input
+            v-model.number="cstart"
+            class="start-chapter-input"
+            :class="{'bad-input': !checkCStart().isLegal}"
+            type="number"
+            min="1"
+            :max="chapterLinks.length"
+          />
+          <span class="ml-2 opacity-75 select-none">(Optional)</span>
+        </div>
+      </div>
+
       <transition-group name="flip-list" class="divide-y-2 chapters-list" tag="div">
         <div
           v-for="(chapter, index) in chapterLinks"
@@ -74,9 +89,10 @@
           :key="chapter.id"
           class="flip-list-item"
         >
-          <div class="chapter-area">
+          <div class="chapter-area" :class="{'cstart-here': index + 1 === cstart}">
             <div class="flex items-center space-x-4 mb-2">
-              <div class="pr-3 border-r border-gray-600">
+              <div class="flex pr-3 border-r border-gray-600">
+                <div class="relative"><div class="cstart-here-arrow"><IconRightArrow /></div></div>
                 <div class="chapter-number">{{ index + 1 }}</div>
               </div>
               <div title="Delete">
@@ -138,8 +154,10 @@
           <div class="output-title">
             Final link:
             <span v-show="!isLegalState" class="output-error-msg">
-              <span v-if="getProblem.data.index === undefined">({{ getProblem.fullMessage() }})</span>
-              <span v-else class="underline cursor-pointer" @click="scrollToChapter(getProblem.data.index)">({{ getProblem.fullMessage() }})</span>
+              <span v-if="!getProblem.elementId">({{ getProblem.message }})</span>
+              <span v-else class="underline cursor-pointer" @click="scrollToElement(getProblem.elementId)">
+                ({{ getProblem.message }})
+              </span>
             </span>
           </div>
           <button
@@ -172,6 +190,8 @@ import IconTrashAlt from '@/assets/icons/trash-alt.svg?inline'
 import IconArrowCircleDown from '@/assets/icons/arrows/arrow-circle-down.svg?inline'
 // @ts-ignore
 import IconArrowCircleUp from '@/assets/icons/arrows/arrow-circle-up.svg?inline'
+// @ts-ignore
+import IconRightArrow from '@/assets/icons/arrows/arrowhead-right-outline.svg?inline'
 
 import { ChapterLink, ImagesModeEnum } from '~/lib/models'
 import { WiseReadLink, WiseReadParams, WISEREAD_ORIGIN, MAX_CHAPTER_NAME_LEN } from '~/lib/WiseReadLink'
@@ -182,11 +202,35 @@ import DomUtils from '~/lib/utils/DomUtils'
 import Vue from 'vue'
 import _ from 'lodash'
 
+class FailureReport {
+  /**
+   * @param {{
+   * message: string,
+   * elementId: string | undefined,
+   * }} param0
+   */
+  constructor ({ message, elementId }) {
+    this.message = message
+    this.elementId = elementId
+  }
+
+  /**
+   * Is the reported chapter legal
+   * @return {boolean}
+   */
+  get isLegal () {
+    return this.message === ''
+  }
+}
+
 class ChapterReport {
   constructor (area = '', message = '', data = {}) {
     this.area = area
     this.message = message
     this.data = data
+
+    /** @type {number?} */
+    this.index = null
   }
 
   /**
@@ -207,6 +251,15 @@ class ChapterReport {
   }
 
   /**
+   * @param {number} index
+   * @return {ChapterReport}
+   */
+  setIndex (index) {
+    this.index = index
+    return this
+  }
+
+  /**
    * @return {string}
    */
   fullMessage () {
@@ -218,9 +271,9 @@ class ChapterReport {
       ? 'Bad chapter'
       : `Bad chapter ${this.area}`
 
-    const part2 = _.isNil(this.data.index)
+    const part2 = _.isNil(this.index)
       ? ''
-      : ` at chapter #${this.data.index + 1}`
+      : ` at chapter #${this.index + 1}`
 
     let message = this.message
     if (message === 'duplication' && !_.isNil(this.data.originIndex)) {
@@ -233,6 +286,16 @@ class ChapterReport {
 
     return `${part1}${part2}${part3}`
   }
+
+  /**
+   * @return {FailureReport}
+   */
+  toFailureReport () {
+    return new FailureReport({
+      message: this.fullMessage(),
+      elementId: (!_.isNil(this.index)) ? `#chapter-item-${this.index}` : undefined
+    })
+  }
 }
 
 export default {
@@ -241,6 +304,7 @@ export default {
     IconTrashAlt,
     IconArrowCircleDown,
     IconArrowCircleUp,
+    IconRightArrow,
   },
 
   data () {
@@ -250,6 +314,8 @@ export default {
       /** @type {ChapterLink[]} */
       chapterLinks: [],
 
+      /** @type {number | string} */
+      cstart: '',
       initialLink: '',
 
       imagesModeOptions: [
@@ -300,18 +366,29 @@ export default {
 
     /**
      * Check if any validator failed.
-     * @return {ChapterReport}
+     * @return {FailureReport}
      */
     getProblem () {
       for (let index = 0; index < this.chapterLinks.length; index++) {
         let chapterReport = this.checkChapterName(index)
-        if (!chapterReport.isLegal) { return chapterReport.updateData({ index: index }) }
+
+        if (!chapterReport.isLegal) {
+          return chapterReport.setIndex(index).toFailureReport()
+        }
 
         chapterReport = this.checkChapterLink(index)
-        if (!chapterReport.isLegal) { return chapterReport.updateData({ index: index }) }
+        if (!chapterReport.isLegal) {
+          return chapterReport.setIndex(index).toFailureReport()
+        }
       }
 
-      return new ChapterReport('', this.wrLink.checkValidators())
+      const failureReport = this.checkCStart()
+      if (!failureReport.isLegal) {
+        return failureReport
+      }
+
+      const globalMessage = this.wrLink.checkValidators()
+      return new FailureReport({ message: globalMessage, elementId: undefined })
     },
   },
 
@@ -323,6 +400,16 @@ export default {
        */
       handler (newChapterLinks) {
         this.wrLink._chapterLinks = newChapterLinks
+      },
+    },
+    cstart: {
+      handler (newCStart) {
+        if (_.isNumber(newCStart)) {
+          this.wrLink._cstart = newCStart - 1
+        }
+        else {
+          this.wrLink._cstart = 0
+        }
       },
     }
   },
@@ -345,6 +432,7 @@ export default {
       }
       this.wrLink = new WiseReadLink(this.initialLink)
       this.chapterLinks = this.wrLink.chapterLinks
+      this.cstart = _.isNumber(this.wrLink.cstart) ? this.wrLink.cstart + 1 : 0
       alert('You have successfully entered the link!')
     },
 
@@ -383,6 +471,27 @@ export default {
       return WiseReadParams.chapterNames.validator([chapterName])
         ? new ChapterReport()
         : new ChapterReport('name')
+    },
+
+    /**
+     * @return {FailureReport}
+     */
+    checkCStart () {
+      const elementId = '#cstartArea'
+
+      if (this.cstart === '' || this.cstart === 1) {
+        return new FailureReport({ message: '', elementId })
+      }
+
+      if (this.cstart < 1) {
+        return new FailureReport({ message: "Start chapter can't be less than 1", elementId })
+      }
+
+      if (this.cstart > this.wrLink.download.length) {
+        return new FailureReport({ message: "Start chapter can't be greater than the number of chapters", elementId })
+      }
+
+      return new FailureReport({ message: '', elementId })
     },
 
     /**
@@ -478,8 +587,11 @@ export default {
       }
     },
 
-    scrollToChapter (index) {
-      this.$scrollTo('#chapter-item-' + index, 250, {
+    /**
+     * @param {string} elementId
+     */
+    scrollToElement (elementId) {
+      this.$scrollTo(elementId, 250, {
         easing: 'ease-out',
         force: true,
       })
@@ -488,7 +600,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .manage-link-page {
   .dark-mode & {
     @apply text-gray-500;
@@ -519,11 +631,13 @@ export default {
 
 // # List transition end #
 
+$select-margin: 0.32rem;
+
 .select {
   @apply bg-transparent block border-2 rounded-md border-gray-300 shadow-sm cursor-pointer;
   @apply transition-colors duration-cmt;
-  margin-top: 0.32rem;
-  margin-bottom: 0.32rem;
+  margin-top: $select-margin;
+  margin-bottom: $select-margin;
 
   padding: 0.32rem 0.38rem;
   min-width: 87%;
@@ -570,6 +684,31 @@ export default {
     @apply text-gray-500 bg-gray-700;
     color: #b7c0cc;
   }
+
+  .cstart-here & {
+    @apply border-2 border-gray-700;
+
+    .dark-mode & {
+      @apply border-gray-500;
+    }
+  }
+}
+
+.cstart-here-arrow {
+  @apply hidden;
+
+  .cstart-here & {
+    @apply block absolute fill-current w-6;
+    right: 7px;
+
+    // center
+    top: 50%;
+    transform: translate(0%, -50%);
+
+    @screen -lg {
+      @apply hidden;
+    }
+  }
 }
 
 .chapter-icon {
@@ -594,7 +733,7 @@ export default {
 
   font-size: 99%;
 
-  @apply rounded-md border-2 border-gray-500 border-opacity-50;
+  @apply rounded-md border-2 border-gray-500 border-opacity-50 bg-transparent;
   @apply transition-colors duration-cmt;
 
   &:focus {
@@ -614,10 +753,6 @@ export default {
   @extend .input;
 
   @apply my-1;
-
-  .dark-mode & {
-    @apply bg-transparent;
-  }
 }
 
 .chapter-link-input {
@@ -628,6 +763,12 @@ export default {
   .dark-mode & {
     @apply bg-transparent;
   }
+}
+
+.start-chapter-input {
+  @extend .input;
+
+  @apply my-1 w-16;
 }
 
 .btn {

@@ -270,12 +270,14 @@ export const actions = {
    * @param {*} context
    * @param {{
    * comicSource: ComicSource,
+   * startChapter: number,
    * onChapterLoadingError: ((comicSource: ComicSource, err: Error, loadingId: number, index: number) => void)?,
    * }} param1
    */
   async initChaptersAndLoadFirstAsync (
     { state, commit, dispatch, getters }, {
       comicSource,
+      startChapter,
       onChapterLoadingError = null,
     }) {
     commit('setOnChapterLoadingErrorFunction', { newFunc: onChapterLoadingError })
@@ -285,7 +287,8 @@ export const actions = {
     if (streams) {
       const tempChapters = streams.map((s) => s.streamedChapter)
       commit('updateChapters', { chapters: tempChapters })
-      await dispatch('moveToChapterAtIndexAsync', { index: 0 })
+      const startChapterIndex = (startChapter >= 0 && startChapter < state.chapters.length) ? startChapter : 0
+      await dispatch('moveToChapterAtIndexAsync', { index: startChapterIndex })
     }
   },
 
