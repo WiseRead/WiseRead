@@ -13,7 +13,16 @@
         <IconLeftArrow class="arrow" />
       </div>
       <div class="chapter-title">
-        <div>{{ chapterName }}</div>
+        <div class="truncate"><div>{{ chapterName }}</div></div>
+
+        <div v-if="$store.state.chapters.length >= 2">
+          <select v-model="selectedChapter" class="chapter-jump-select" @change="onChapterJump($event)">
+            <option v-for="(cName, index) in $store.getters.chaptersNames" :key="index" :value="index">
+              {{ cName }}
+            </option>
+          </select>
+          <button><IconDiagonalArrowRightUp class="jump-button" /></button>
+        </div>
       </div>
       <div
         class="arrow-area"
@@ -31,11 +40,14 @@
 import IconLeftArrow from '@/assets/icons/arrows/arrowhead-left-outline.svg?inline'
 // @ts-ignore
 import IconRightArrow from '@/assets/icons/arrows/arrowhead-right-outline.svg?inline'
+// @ts-ignore
+import IconDiagonalArrowRightUp from '@/assets/icons/arrows/diagonal-arrow-right-up-outline.svg?inline'
 
 export default {
   components: {
     IconLeftArrow,
     IconRightArrow,
+    IconDiagonalArrowRightUp,
   },
 
   props: {
@@ -45,6 +57,12 @@ export default {
       validator: function (value) {
         return ['top', 'bottom'].includes(value)
       }
+    }
+  },
+
+  data () {
+    return {
+      selectedChapter: this.$store.state.currChapterIndex ?? 0,
     }
   },
 
@@ -109,20 +127,35 @@ export default {
     },
   },
 
+  watch: {
+    '$store.state.currChapterIndex': function (val, oldVal) {
+      this.selectedChapter = val
+    }
+  },
+
   methods: {
     /**
      * @param {string} side
      */
     arrowClick (side) {
-      const moveToChapterFunc = async () => {
-        if ((side === 'right' && this.$store.state.isLTR) ||
-            (side === 'left' && !this.$store.state.isLTR)) {
-          await this.$store.dispatch('moveToNextChapterAsync')
-        }
-        else {
-          await this.$store.dispatch('moveToPreviousChapterAsync')
-        }
+      let targetIndex = this.$store.state.currChapterIndex
+
+      if ((side === 'right' && this.$store.state.isLTR) ||
+          (side === 'left' && !this.$store.state.isLTR)) {
+        targetIndex += 1 // Next chapter
       }
+      else {
+        targetIndex -= 1 // Previous chapter
+      }
+
+      this.moveToChapter(targetIndex)
+    },
+
+    /**
+     * @param {number} index
+     */
+    moveToChapter (index) {
+      const dispatchMoveToChapter = () => { this.$store.dispatch('moveToChapterAtIndexAsync', { index: index }) }
 
       if (!this.isTop) {
         // Scroll to top chapter title
@@ -131,19 +164,25 @@ export default {
           offset: -20,
           force: true,
           onDone: (element) => {
-            moveToChapterFunc()
+            dispatchMoveToChapter()
           },
         })
       }
       else {
-        moveToChapterFunc()
+        dispatchMoveToChapter()
       }
+    },
+
+    onChapterJump () {
+      this.moveToChapter(this.selectedChapter)
     },
   }
 }
 </script>
 
 <style lang="scss" scoped>
+$jump-button-width: 1rem;
+
 .cnav-color {
   @apply text-gray-600 transition-colors duration-cmt;
 
@@ -211,4 +250,28 @@ export default {
   }
 }
 
+.jump-button {
+  @apply cursor-pointer;
+  width: $jump-button-width;
+  max-width: $jump-button-width;
+}
+
+.hidden-select {
+  opacity: 0;
+  position: absolute;
+}
+
+.chapter-jump-select {
+  @extend .hidden-select;
+
+  @apply cursor-pointer;
+  width: $jump-button-width;
+  max-width: $jump-button-width;
+
+  option {
+    .dark-mode & {
+      @apply bg-gray-800 text-gray-300;
+    }
+  }
+}
 </style>

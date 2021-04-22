@@ -70,6 +70,13 @@ export const getters = {
   },
 
   /**
+   * @return {string[]}
+   */
+  chaptersNames: (state) => {
+    return state.chapters.map((c) => c.chapterInfo.chapterName)
+  },
+
+  /**
    * @return {boolean}
    */
   areImagesDisplayed: (state, getters) => {
