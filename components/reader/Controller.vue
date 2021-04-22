@@ -11,8 +11,13 @@
         <div class="pt-3 pb-1 pl-2 md:pl-4 pr-2 md:pr-4 md:px-5 text-sm md:text-base text-left font-sans leading-snug">
           <div class="flex items-center justify-between">
             <div class="min-w-0">
-              <!-- Current image name -->
-              <div><IconImage class="w-4 md:mr-1 inline" /> Image:</div>
+              <!-- Line 1 -->
+              <div class="flex items-center">
+                <IconBookBlack class="mr-1 inline" style="width: 0.89rem; margin-top: 0.11rem;" />
+                <span class="mr-3"> Chapter: {{ $store.state.currChapterIndex + 1 }}/{{ $store.state.chapters.length }}</span>
+                <IconImage class="w-4 mr-1 inline" style="margin-top: 0.11rem;" /><span> Image:</span>
+              </div>
+              <!-- Line 2 -->
               <div class="image-name">{{ currImageName }}</div>
             </div>
             <!-- Rigth side -->
@@ -32,6 +37,8 @@
 // @ts-ignore
 import IconImage from '@/assets/icons/image/image.svg?inline'
 // @ts-ignore
+import IconBookBlack from '@/assets/icons/book/book_black.svg?inline'
+// @ts-ignore
 import IconArrowHeadUpThin from '@/assets/icons/arrows/arrowhead-up-thin.svg?inline'
 // @ts-ignore
 import IconArrowUpLong from '@/assets/icons/arrows/arrow-up-long.svg?inline'
@@ -41,6 +48,7 @@ import { StrUtils } from '~/lib/utils/StrUtils'
 export default {
   components: {
     IconImage,
+    IconBookBlack,
     IconArrowHeadUpThin,
     IconArrowUpLong
   },
