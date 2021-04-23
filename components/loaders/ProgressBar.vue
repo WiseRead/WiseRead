@@ -874,8 +874,7 @@ export default {
     this.pid = `pid-${this._uid}` // Use component unique ID
 
     this.$nextTick(function () {
-      // Code that will run only after the
-      // entire view has been rendered
+      // Code that will run only after the entire view has been rendered
 
       const bar = new ldBar(`#${this.pid}`)
       bar.set(this.percent)

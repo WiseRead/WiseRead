@@ -3,15 +3,10 @@
 <template>
   <div class="flex flex-row-reverse">
     <ul>
-      <li
-        v-for="color of colors"
-        :key="color"
-        :title="capitalize(`${color} mode`)"
-      >
+      <li :title="currColor.name">
         <component
-          :is="`icon-${color}`"
-          :class="getColorClasses(color)"
-          @click="$colorMode.preference = color"
+          :is="currColor.icon"
+          @click="toggleColorMode()"
         />
       </li>
     </ul>
@@ -28,6 +23,15 @@
         />
       </li>
     </ul>
+    <ul>
+      <li :title="currFullscreen.name">
+        <component
+          :is="currFullscreen.icon"
+          class="feather big"
+          @click="toggleFullscreen()"
+        />
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -40,8 +44,13 @@ import IconDark from '@/assets/icons/color-mode/dark.svg?inline'
 import IconContinuous from '@/assets/icons/images-mode/continuous-images.svg?inline'
 // @ts-ignore
 import IconSeparate from '@/assets/icons/images-mode/separate-images.svg?inline'
+// @ts-ignore
+import IconFullscreen from '@/assets/icons/fullscreen/fullscreen.svg?inline'
+// @ts-ignore
+import IconFullscreenExit from '@/assets/icons/fullscreen/fullscreen_exit.svg?inline'
 
 import { ImagesModeEnum } from '~/lib/models'
+import DomUtils from '~/lib/utils/DomUtils'
 import _ from 'lodash'
 
 export default {
@@ -50,12 +59,14 @@ export default {
     IconDark,
     IconContinuous,
     IconSeparate,
+    IconFullscreen,
+    IconFullscreenExit,
   },
 
   data () {
     return {
-      colors: ['light', 'dark'],
-      imagesModes: Object.values(ImagesModeEnum)
+      imagesModes: Object.values(ImagesModeEnum),
+      isFullscreen: false,
     }
   },
 
@@ -65,19 +76,44 @@ export default {
      */
     isReaderPage () {
       return this.$route.name === 'index'
-    }
+    },
+
+    /**
+     * @return {{
+     * icon: string,
+     * name: string
+     * }}
+     */
+    currColor: function () {
+      return this.$colorMode.value === 'dark'
+        ? { icon: 'icon-light', name: 'Light mode' }
+        : { icon: 'icon-dark', name: 'Dark mode' }
+    },
+
+    /**
+     * @return {{
+     * icon: string,
+     * name: string
+     * }}
+     */
+    currFullscreen: function () {
+      return this.isFullscreen
+        ? { icon: 'icon-fullscreen-exit', name: 'Exit Fullscreen' }
+        : { icon: 'icon-fullscreen', name: 'Fullscreen' }
+    },
+  },
+
+  mounted () {
+    this.$nextTick(function () {
+      // Code that will run only after the entire view has been rendered
+
+      setInterval(() => { this.isFullscreen = DomUtils.isFullscreen() }, 1000)
+    })
   },
 
   methods: {
-    getColorClasses (color) {
-      // Does not set classes on ssr when preference is system (because we don't know the preference until client-side)
-      if (this.$colorMode.unknown) {
-        return {}
-      }
-      return {
-        preferred: color === this.$colorMode.preference,
-        selected: color === this.$colorMode.value
-      }
+    toggleColorMode () {
+      this.$colorMode.preference = this.$colorMode.preference === 'dark' ? 'light' : 'dark'
     },
 
     getImagesModeClasses (imagesMode) {
@@ -98,7 +134,18 @@ export default {
 
     capitalize (str) {
       return _.capitalize(str)
-    }
+    },
+
+    toggleFullscreen () {
+      if (DomUtils.isFullscreen()) {
+        DomUtils.closeFullscreen()
+        this.isFullscreen = false
+      }
+      else {
+        DomUtils.openFullscreen()
+        this.isFullscreen = true
+      }
+    },
   }
 }
 </script>
@@ -106,11 +153,9 @@ export default {
 <style scoped>
 ul {
   line-height: 0;
-  transition: opacity 0.3s;
 
   &.hide {
-    opacity: 0;
-    visibility: hidden;
+    display: none;
   }
 }
 
@@ -137,6 +182,10 @@ ul li {
   margin: 0;
   border-radius: 5px;
   transition: var(--color-mode-transition-time);
+
+  &.big {
+    padding: 2px;
+  }
 
   @screen -sm {
     width: 29px;
