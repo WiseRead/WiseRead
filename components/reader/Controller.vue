@@ -163,7 +163,7 @@ export default {
 .open-close {
   @apply rounded-t-xl text-center cursor-pointer;
   margin-left: 1.5rem;
-  height: 1.27rem;
+  height: 1.31rem;
   width: 3.1rem;
 
   @screen md {
@@ -176,7 +176,7 @@ export default {
 .open-close-icon {
   @apply inline transform rotate-0;
   height: 0.92rem;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.07rem;
   transition: transform var(--open-controller-transition-time);
 
   @screen md {
