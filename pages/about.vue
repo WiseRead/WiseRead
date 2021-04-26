@@ -85,7 +85,7 @@ export default {
      */
     realExamples () {
       const examples = [{
-        exampleName: 'Manga (Dropbox, Slime 1-3)',
+        exampleName: 'Slime 1-3 (Manga, Dropbox)',
         data: {
           chapterLinks: [
             { name: 'Slime 1', link: 'https://www.dropbox.com/s/0xvml5x3blcwkek/Tensei%20Shitara%20Slime%20Datta%20Ken%20Chapter%201.cbz?dl=0' },
@@ -96,7 +96,7 @@ export default {
         },
       },
       {
-        exampleName: 'Manga (Dropbox, Spy X Family - Prologue)',
+        exampleName: 'Spy X Family - Prologue (Manga, Dropbox)',
         data: {
           chapterLinks: [
             { name: 'Spy X Family - Prologue', link: 'https://www.dropbox.com/s/j4tab4xsrd2tax6/Chapter%2000%20Prologue.cbz?dl=0' },
@@ -105,7 +105,7 @@ export default {
         },
       },
       {
-        exampleName: 'Webtoon (Google Drive, Solo Leveling - Prologue)',
+        exampleName: 'Solo Leveling - Prologue (Webtoon, Google Drive)',
         data: {
           chapterLinks: [
             { name: 'Solo Leveling - Prologue', link: 'https://drive.google.com/file/d/1VbeoaVIGUin4ZMj4ycsI2qSMOXPXH2pW/view?usp=sharing' },

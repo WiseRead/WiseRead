@@ -3,9 +3,9 @@
     <h1>Manage Link</h1>
     Create or edit your WiseRead Link. Select settings and add chapters.
     <div class="pt-3 pb-10 mb-10 border-b-2 dark:border-gray-700 transition-colors duration-cmt">
-      <h2>Edit an existing link</h2>
+      <h2>Edit old link</h2>
       <div>
-        Enter WiseRead link you want to edit if you already have one (Ignore if you want to create new):
+        Enter WiseRead link you want to edit (Ignore if you want to create new link):
         <div class="flex" style="margin-top: 0.2rem;">
           <input
             v-model.trim="initialLink"
@@ -329,8 +329,8 @@ export default {
       ],
 
       hideInputOptions: [
-        { text: 'Keep the top area', value: false },
-        { text: 'Remove the top area', value: true },
+        { text: 'Keep top area', value: false },
+        { text: 'Remove top area', value: true },
       ],
 
       preloadingOptions: [
