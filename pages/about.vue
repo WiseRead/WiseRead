@@ -46,6 +46,8 @@
 
     <h2>Read more</h2>
     <NuxtLink to="/doc/get-direct-download-link">How to get a direct download link</NuxtLink>
+    <br />
+    <NuxtLink to="/doc/similar-projects">Similar projects</NuxtLink>
 
     <h2 class="pt-3">Contact me</h2>
     <p class="font-medium">
