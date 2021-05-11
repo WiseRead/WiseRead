@@ -878,40 +878,6 @@ $select-margin: 0.32rem;
   }
 }
 
-.input {
-  padding-top: 0.22rem;
-  padding-bottom: 0.22rem;
-  padding-left: 0.43rem;
-  padding-right: 0.43rem;
-
-  font-size: 99%;
-
-  @apply rounded-md border-2 border-gray-500 border-opacity-50 bg-transparent;
-  @apply transition-colors duration-cmt;
-
-  &:focus {
-    @apply outline-none border-opacity-100;
-  }
-
-  &.bad-input {
-    @apply border-red-500;
-  }
-
-  .dark-mode &::placeholder {
-    opacity: 0.7;
-  }
-}
-
-.link-input {
-  @extend .input;
-
-  @apply bg-gray-100 my-1 w-full;
-
-  .dark-mode & {
-    @apply bg-transparent;
-  }
-}
-
 .radio-group {
   @apply text-lg;
 
