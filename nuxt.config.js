@@ -84,6 +84,10 @@ export default {
       name: 'WiseRead',
       short_name: 'WiseRead',
       description: 'Online/Offline web comic reader',
+    },
+    workbox: {
+      // See https://github.com/nuxt-community/pwa-module/issues/176#issuecomment-739556901
+      clientsClaim: false
     }
   },
 
