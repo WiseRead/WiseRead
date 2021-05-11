@@ -846,6 +846,8 @@
 }, {}, [1])
 // # end of loading-bar.js code #
 
+let pid = 0
+
 export default {
   props: {
     percent: {
@@ -858,8 +860,9 @@ export default {
   },
 
   data () {
+    pid += 1
     return {
-      pid: null,
+      pid: `pid-${pid}` // unique id,
     }
   },
 
@@ -871,11 +874,7 @@ export default {
   },
 
   mounted () {
-    this.pid = `pid-${this._uid}` // Use component unique ID
-
-    this.$nextTick(function () {
-      // Code that will run only after the entire view has been rendered
-
+    this.$nextTick(function () { // Code that will run only after the entire view has been rendered
       const bar = new ldBar(`#${this.pid}`)
       bar.set(this.percent)
     })

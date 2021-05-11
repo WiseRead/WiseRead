@@ -24,7 +24,7 @@ h1, h2, h3, h4, h5, h6 {
   @for $index from 1 through 6 {
     &:not(.custom) {
       h#{$index}:not(.custom) {
-        margin-top: 1.6rem;
+        margin-top: 1.91rem;
         margin-bottom: 0.6rem;
       }
 
@@ -68,19 +68,106 @@ h1, h2, h3, h4, h5, h6 {
     text-decoration: underline;
   }
 
+  .input {
+    padding-top: 0.22rem;
+    padding-bottom: 0.22rem;
+    padding-left: 0.43rem;
+    padding-right: 0.43rem;
+
+    font-size: 99%;
+
+    @apply rounded-md border-2 border-gray-500 border-opacity-50 bg-transparent;
+    @apply transition-colors duration-cmt;
+
+    &:focus {
+      @apply outline-none border-opacity-100;
+    }
+
+    &.bad-input {
+      @apply border-red-500;
+    }
+
+    .dark-mode &::placeholder {
+      opacity: 0.7;
+    }
+  }
+
+  .link-input {
+    @extend .input;
+
+    @apply bg-gray-100 my-1 w-full;
+
+    .dark-mode & {
+      @apply bg-transparent;
+    }
+  }
+
+  // (Use with empty span)
+  .small-br {
+    @apply block mt-2;
+  }
+
   .marked-link {
     @apply border rounded font-mono break-all;
     padding: 0.12rem 0.32rem;
   }
 
+  .blockquote {
+    @apply block border-l-4 pl-5;
+
+    .dark-mode & {
+      @apply border-gray-700;
+    }
+  }
+
+  $highlight-border-radius: 6px;
+
   .marked-block {
-    @apply block my-3 py-3 px-4 bg-gray-200 rounded-sm break-all;
+    @apply block my-3 py-3 px-4 bg-gray-200;
     @apply transition-colors duration-cmt;
-    line-height: 1.626rem;
+    border-radius: $highlight-border-radius;
+    line-height: 1.54rem;
+    word-break: break-word;
+
+    &.no-break {
+      overflow-wrap: auto;
+      white-space: nowrap;
+      overflow: auto;
+      word-break: normal;
+      word-wrap: normal;
+    }
 
     .dark-mode & {
       @apply bg-gray-800;
       background-color: #3d4758;
+    }
+  }
+
+  .highlight {
+    --highlight-color-bg: #f6f8fa;
+    --highlight-color-text: #24292e;
+
+    .dark-mode & {
+      --highlight-color-bg: #2d333b;
+      --highlight-color-text: #adbac7;
+    }
+
+    margin-bottom: 16px;
+
+    pre {
+      @apply transition-colors duration-cmt;
+      @apply font-mono;
+
+      border-radius: $highlight-border-radius;
+      font-size: 90%;
+      line-height: 1.45;
+      padding: 16px;
+      background-color: var(--highlight-color-bg);
+      color: var(--highlight-color-text);
+
+      word-wrap: normal;
+      word-break: normal;
+      overflow: auto;
     }
   }
 

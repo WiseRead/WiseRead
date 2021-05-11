@@ -2,7 +2,7 @@
   <div class="page manage-link-page">
     <h1>Manage Link</h1>
     Create or edit your WiseRead Link. Select settings and add chapters.
-    <div class="pt-3 pb-10 mb-10 border-b-2 dark:border-gray-700 transition-colors duration-cmt">
+    <div class="pt-3 pb-10 mb-10 border-b-2 border-separator-color">
       <h2>Edit old link</h2>
       <div>
         Enter WiseRead link you want to edit (Ignore if you want to create new link):
@@ -11,7 +11,7 @@
             v-model.trim="initialLink"
             type="text"
             placeholder="Old link"
-            class="chapter-link-input "
+            class="link-input"
           />
           <button v-wave class="btn ml-3" @click="enterInitialLink()">Enter</button>
         </div>
@@ -67,83 +67,123 @@
 
     <div>
       <h2 class="custom mt-14">Chapters</h2>
-      <div v-if="chapterLinks.length > 1 || cstart > 1" id="cstartArea" class="mt-3 mb-2">
-        Start reader at chapter (first chapter by default):
-        <div>
+      <div>
+        <RadioGroup
+          v-model="selectedChaptersInputMode"
+          :options="Object.values(enum_ChaptersInputMode)"
+          class="radio-group mt-5"
+        />
+      </div>
+
+      <div v-if="selectedChaptersInputMode === enum_ChaptersInputMode.CHAPTER_LIST">
+        <transition-group name="flip-list" class="divide-y-2 chapters-list" tag="div">
+          <div
+            v-for="(chapter, index) in chapterLinks"
+            :id="'chapter-item-' + index"
+            :key="chapter.id"
+            class="flip-list-item"
+          >
+            <div class="chapter-area" :class="{'cstart-here': index + 1 === cstart}">
+              <div class="flex items-center space-x-4 mb-2">
+                <div class="flex pr-3 border-r border-gray-600">
+                  <div class="relative"><div class="cstart-here-arrow"><IconRightArrow /></div></div>
+                  <div class="chapter-number">{{ index + 1 }}</div>
+                </div>
+                <div title="Delete">
+                  <IconTrashAlt
+                    :class="[chapterLinks.length <= 1 ? 'click-disabled opacity-50' : '']"
+                    class="chapter-icon click-icon text-red-800 dark:text-red-700"
+                    style="margin-bottom: 0.08rem; padding: 0.044rem;"
+                    @click="deleteChapter(index)"
+                  />
+                </div>
+                <div title="Move up">
+                  <IconArrowCircleUp
+                    :class="[index === 0 ? 'click-disabled opacity-50' : '']"
+                    class="chapter-icon click-icon regular-icon"
+                    @click="swapChapters(index, index - 1)"
+                  />
+                </div>
+                <div title="Move down">
+                  <IconArrowCircleDown
+                    :class="[index >= chapterLinks.length - 1 ? 'click-disabled opacity-50' : '']"
+                    class="chapter-icon click-icon regular-icon"
+                    @click="swapChapters(index, index + 1)"
+                  />
+                </div>
+              </div>
+              <input
+                v-model.trim="chapter.name"
+                type="text"
+                placeholder="Chapter name"
+                :class="{'bad-input': !checkChapterName(index).isLegal}"
+                class="input my-1"
+              />
+              <span v-if="areChapterNamesRequired" class="ml-2 opacity-100 select-none">(Required)</span>
+              <span v-else class="ml-2 opacity-75 select-none">(Optional)</span>
+              <input
+                v-model.trim="chapter.link"
+                type="url"
+                placeholder="https://example.com/files/chapter.cbz"
+                :class="{'bad-input': !checkChapterLink(index).isLegal}"
+                class="link-input"
+              />
+            </div>
+          </div>
+        </transition-group>
+        <button
+          v-wave
+          class="font-medium text-xl flex items-center rounded-xl p-1 focus:outline-none"
+          @click="addChapter()"
+        >
+          <IconPlusCircle class="inline mr-2" style="width: 1.57rem;" />Add chapter
+        </button>
+      </div>
+      <div v-else-if="selectedChaptersInputMode === enum_ChaptersInputMode.CONFIG_FILE">
+        <div class="mt-5">
+          <div class="mb-8 blockquote">
+            Config file is an external file with chapters and settings.
+            <br />
+            <NuxtLink to="/doc/config-file">Read more ></NuxtLink>
+            <br />
+          </div>
+          Enter config link/id:
           <input
-            v-model.number="cstart"
-            class="start-chapter-input"
-            :class="{'bad-input': !checkCStart().isLegal}"
-            type="number"
-            min="1"
-            :max="chapterLinks.length"
+            v-model.trim="configpathValue"
+            type="text"
+            placeholder="Link or id"
+            class="link-input mt-5"
           />
-          <span class="ml-2 opacity-75 select-none">(Optional)</span>
+
+          <div class="mt-5">
+            Config type:
+            <select v-model="selectedConfigpathType" class="select mt-1">
+              <option v-for="option in configpathTypeOptions" :key="option.value" :value="option.value">
+                {{ option.text }}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <transition-group name="flip-list" class="divide-y-2 chapters-list" tag="div">
-        <div
-          v-for="(chapter, index) in chapterLinks"
-          :id="'chapter-item-' + index"
-          :key="chapter.id"
-          class="flip-list-item"
-        >
-          <div class="chapter-area" :class="{'cstart-here': index + 1 === cstart}">
-            <div class="flex items-center space-x-4 mb-2">
-              <div class="flex pr-3 border-r border-gray-600">
-                <div class="relative"><div class="cstart-here-arrow"><IconRightArrow /></div></div>
-                <div class="chapter-number">{{ index + 1 }}</div>
-              </div>
-              <div title="Delete">
-                <IconTrashAlt
-                  :class="[chapterLinks.length <= 1 ? 'click-disabled opacity-50' : '']"
-                  class="chapter-icon click-icon text-red-800 dark:text-red-700"
-                  style="margin-bottom: 0.08rem; padding: 0.044rem;"
-                  @click="deleteChapter(index)"
-                />
-              </div>
-              <div title="Move up">
-                <IconArrowCircleUp
-                  :class="[index === 0 ? 'click-disabled opacity-50' : '']"
-                  class="chapter-icon click-icon regular-icon"
-                  @click="swapChapters(index, index - 1)"
-                />
-              </div>
-              <div title="Move down">
-                <IconArrowCircleDown
-                  :class="[index >= chapterLinks.length - 1 ? 'click-disabled opacity-50' : '']"
-                  class="chapter-icon click-icon regular-icon"
-                  @click="swapChapters(index, index + 1)"
-                />
-              </div>
-            </div>
-            <input
-              v-model.trim="chapter.name"
-              type="text"
-              placeholder="Chapter name"
-              :class="{'bad-input': !checkChapterName(index).isLegal}"
-              class="chapter-name-input"
-            />
-            <span v-if="areChapterNamesRequired" class="ml-2 opacity-100 select-none">(Required)</span>
-            <span v-else class="ml-2 opacity-75 select-none">(Optional)</span>
-            <input
-              v-model.trim="chapter.link"
-              type="url"
-              placeholder="https://example.com/files/chapter.cbz"
-              :class="{'bad-input': !checkChapterLink(index).isLegal}"
-              class="chapter-link-input"
-            />
-          </div>
-        </div>
-      </transition-group>
-      <button
-        v-wave
-        class="font-medium text-xl flex items-center rounded-xl p-1 focus:outline-none"
-        @click="addChapter()"
+      <div
+        v-if="chapterLinks.length > 1 || (cstart != '') || selectedChaptersInputMode === enum_ChaptersInputMode.CONFIG_FILE"
+        id="cstartArea"
+        class="mt-8 mb-2 pt-3 border-t-2 border-separator-color"
       >
-        <IconPlusCircle class="inline mr-2" style="width: 1.57rem;" />Add chapter
-      </button>
+        From which chapter to start:
+        <div>
+          <input
+            v-model.number="cstart"
+            class="input my-1 w-16"
+            :class="{'bad-input': !checkCStart().isLegal}"
+            type="number"
+            min="1"
+            :max="maxCStart"
+          />
+          <span class="ml-2 opacity-75 select-none">(Optional, first chapter by default)</span>
+        </div>
+      </div>
     </div>
 
     <div class="output-height"></div>
@@ -173,7 +213,7 @@
           type="text"
           placeholder="Your final link"
           :class="{'bad-input': !isLegalState}"
-          class="chapter-link-input"
+          class="link-input"
           readonly
         />
       </div>
@@ -194,6 +234,7 @@ import IconArrowCircleUp from '@/assets/icons/arrows/arrow-circle-up.svg?inline'
 import IconRightArrow from '@/assets/icons/arrows/arrowhead-right-outline.svg?inline'
 
 import { ChapterLink, ImagesModeEnum } from '~/lib/models'
+import { ConfigpathType, splitConfigpath } from '~/lib/Configpath'
 import { WiseReadLink, WiseReadParams, WISEREAD_ORIGIN, MAX_CHAPTER_NAME_LEN } from '~/lib/WiseReadLink'
 import { VArray } from '~/lib/utils/VArray'
 import { StrUtils } from '~/lib/utils/StrUtils'
@@ -201,6 +242,14 @@ import DomUtils from '~/lib/utils/DomUtils'
 
 import Vue from 'vue'
 import _ from 'lodash'
+
+/**
+ * @readonly @enum {string}
+ */
+const enum_ChaptersInputMode = {
+  CHAPTER_LIST: 'Chapter List',
+  CONFIG_FILE: 'Config File',
+}
 
 class FailureReport {
   /**
@@ -317,6 +366,10 @@ export default {
       /** @type {number | string} */
       cstart: '',
       initialLink: '',
+      enum_ChaptersInputMode: enum_ChaptersInputMode,
+      selectedChaptersInputMode: enum_ChaptersInputMode.CHAPTER_LIST,
+      configpathValue: '',
+      selectedConfigpathType: ConfigpathType.RAWURL,
 
       imagesModeOptions: [
         { text: 'Continuous (best for webtoon)', value: ImagesModeEnum.CONTINUOUS },
@@ -337,6 +390,11 @@ export default {
         { text: '2 (Recommended)', value: 2 },
         { text: '1', value: 1 },
         { text: '0 (Less traffic but slow)', value: 0 },
+      ],
+
+      configpathTypeOptions: [
+        { text: 'Raw URL', value: ConfigpathType.RAWURL },
+        { text: 'Gist id', value: ConfigpathType.GIST },
       ],
     }
   },
@@ -390,28 +448,75 @@ export default {
       const globalMessage = this.wrLink.checkValidators()
       return new FailureReport({ message: globalMessage, elementId: undefined })
     },
+
+    /**
+     * @return {number}
+     */
+    maxCStart () {
+      if (this.selectedChaptersInputMode === enum_ChaptersInputMode.CONFIG_FILE) {
+        return 999999
+      }
+
+      if (this.chapterLinks.length > 0) {
+        return this.chapterLinks.length
+      }
+
+      return 1
+    },
+
+    /**
+     * @return {{type: string, value: string }}
+     */
+    currConfigpathTypeAndValue () {
+      return { type: this.selectedConfigpathType, value: this.configpathValue }
+    },
   },
 
   watch: {
     chapterLinks: {
       deep: true,
-      /**
-       * @param {ChapterLink[]} newChapterLinks
-       */
+      /** @param {ChapterLink[]} newChapterLinks */
       handler (newChapterLinks) {
         this.wrLink._chapterLinks = newChapterLinks
       },
     },
     cstart: {
+      /** @param {number | string} newCStart */
       handler (newCStart) {
         if (_.isNumber(newCStart)) {
-          this.wrLink._cstart = newCStart - 1
+          this.wrLink._cstart = Math.max(newCStart - 1, 0)
         }
         else {
           this.wrLink._cstart = 0
         }
       },
-    }
+    },
+    selectedChaptersInputMode: {
+      /** @param {enum_ChaptersInputMode} newMode */
+      handler (newMode) {
+        if (newMode === enum_ChaptersInputMode.CHAPTER_LIST) {
+          this.wrLink._configpath = ''
+          this.wrLink._chapterLinks = this.chapterLinks
+          if (this.cstart === 1) {
+            this.cstart = ''
+          }
+        }
+        else {
+          this.wrLink._configpath = this.combineConfigpathTypeAndValue(
+            this.selectedConfigpathType, this.configpathValue)
+          this.wrLink._chapterLinks = []
+        }
+      },
+    },
+
+    currConfigpathTypeAndValue: {
+      /**  @param {{type: string, value: string }} configpathTypeAndValue */
+      handler (configpathTypeAndValue) {
+        this.wrLink._configpath = this.combineConfigpathTypeAndValue(
+          configpathTypeAndValue.type, configpathTypeAndValue.value
+        )
+      },
+    },
   },
 
   mounted () {
@@ -432,8 +537,37 @@ export default {
       }
       this.wrLink = new WiseReadLink(this.initialLink)
       this.chapterLinks = this.wrLink.chapterLinks
+      if (this.chapterLinks.length === 0) {
+        // Init with empty ChapterLink
+        this.chapterLinks.push(new ChapterLink({ link: '', name: '' }))
+      }
       this.cstart = _.isNumber(this.wrLink.cstart) ? this.wrLink.cstart + 1 : 0
+      if (this.cstart === 1) {
+        this.cstart = ''
+      }
+      if (this.wrLink.configpath) {
+        const [configpathType, configpathValue] = splitConfigpath(this.wrLink.configpath)
+        this.selectedConfigpathType = configpathType
+        this.configpathValue = configpathValue
+        this.selectedChaptersInputMode = enum_ChaptersInputMode.CONFIG_FILE
+      }
+
       alert('You have successfully entered the link!')
+    },
+
+    /**
+     * Return 'type:value', or empty no value
+     * @param {string} ConfigpathType
+     * @param {string} configpathValue
+     * @return {string}
+     */
+    combineConfigpathTypeAndValue (ConfigpathType, configpathValue) {
+      if (configpathValue) {
+        return `${ConfigpathType}:${configpathValue}`
+      }
+      else {
+        return ''
+      }
     },
 
     /**
@@ -443,6 +577,11 @@ export default {
     checkChapterName (chapterIndex) {
       if (chapterIndex < 0 || chapterIndex > this.chapterLinks.length - 1) {
         return new ChapterReport('name', 'error')
+      }
+
+      // Ignore when in config mode
+      if (this.selectedChaptersInputMode === enum_ChaptersInputMode.CONFIG_FILE) {
+        return new ChapterReport()
       }
 
       // If empty link, any name is good
@@ -487,7 +626,8 @@ export default {
         return new FailureReport({ message: "Start chapter can't be less than 1", elementId })
       }
 
-      if (this.cstart > this.wrLink.download.length) {
+      if (this.cstart > this.wrLink.download.length &&
+          this.selectedChaptersInputMode === enum_ChaptersInputMode.CHAPTER_LIST) {
         return new FailureReport({ message: "Start chapter can't be greater than the number of chapters", elementId })
       }
 
@@ -501,6 +641,11 @@ export default {
     checkChapterLink (chapterIndex) {
       if (chapterIndex < 0 || chapterIndex > this.chapterLinks.length - 1) {
         return new ChapterReport('link', 'error')
+      }
+
+      // Ignore when in config mode
+      if (this.selectedChaptersInputMode === enum_ChaptersInputMode.CONFIG_FILE) {
+        return new ChapterReport()
       }
 
       const chapterLink = this.chapterLinks[chapterIndex].link
@@ -631,6 +776,14 @@ export default {
 
 // # List transition end #
 
+.border-separator-color {
+  @apply transition-colors duration-cmt;
+
+  .dark-mode & {
+    @apply border-gray-700;
+  }
+}
+
 $select-margin: 0.32rem;
 
 .select {
@@ -725,50 +878,14 @@ $select-margin: 0.32rem;
   }
 }
 
-.input {
-  padding-top: 0.22rem;
-  padding-bottom: 0.22rem;
-  padding-left: 0.43rem;
-  padding-right: 0.43rem;
+.radio-group {
+  @apply text-lg;
 
-  font-size: 99%;
+  --indicator-color: currentColor;
 
-  @apply rounded-md border-2 border-gray-500 border-opacity-50 bg-transparent;
-  @apply transition-colors duration-cmt;
-
-  &:focus {
-    @apply outline-none border-opacity-100;
+  @screen -md {
+    --labels-gap: 1rem;
   }
-
-  &.bad-input {
-    @apply border-red-500;
-  }
-
-  .dark-mode &::placeholder {
-    opacity: 0.7;
-  }
-}
-
-.chapter-name-input {
-  @extend .input;
-
-  @apply my-1;
-}
-
-.chapter-link-input {
-  @extend .input;
-
-  @apply bg-gray-100 my-1 w-full;
-
-  .dark-mode & {
-    @apply bg-transparent;
-  }
-}
-
-.start-chapter-input {
-  @extend .input;
-
-  @apply my-1 w-16;
 }
 
 .btn {

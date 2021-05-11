@@ -24,6 +24,7 @@ module.exports = {
     'font-family-no-missing-generic-family-keyword': null,
     'declaration-empty-line-before': null,
     'comment-empty-line-before': null,
+    'length-zero-no-unit': null,
     'selector-list-comma-newline-after': 'always-multi-line',
   }
 }
