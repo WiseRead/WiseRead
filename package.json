@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.12.5",
-    "@nuxtjs/pwa": "^3.3.5",
     "@octokit/core": "^3.4.0",
     "@types/jquery": "^3.5.5",
     "core-js": "^3.8.3",
@@ -35,6 +34,7 @@
     "@nuxtjs/color-mode": "^2.0.3",
     "@nuxtjs/eslint-config": "^5.0.0",
     "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/stylelint-module": "^4.0.0",
     "@nuxtjs/svg": "^0.1.12",
     "@nuxtjs/tailwindcss": "^3.4.2",

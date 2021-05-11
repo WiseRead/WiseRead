@@ -47,6 +47,8 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
+    // https://pwa.nuxtjs.org
+    '@nuxtjs/pwa',
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/stylelint
@@ -63,8 +65,6 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa',
     // https://vue-scrollto.netlify.app/
     ['vue-scrollto/nuxt', { duration: 300 }],
     // https://github.com/justintaddei/v-wave
