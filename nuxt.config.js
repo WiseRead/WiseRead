@@ -47,8 +47,8 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    // https://pwa.nuxtjs.org
-    '@nuxtjs/pwa',
+    // // https://pwa.nuxtjs.org
+    // '@nuxtjs/pwa',
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/stylelint
@@ -74,22 +74,22 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {},
 
-  // PWA module configuration: https://go.nuxtjs.dev/pwa
-  pwa: {
-    icon: {
-      fileName: 'favicon.png'
-    },
-    manifest: {
-      lang: 'en',
-      name: 'WiseRead',
-      short_name: 'WiseRead',
-      description: 'Online/Offline web comic reader',
-    },
-    workbox: {
-      // See https://github.com/nuxt-community/pwa-module/issues/176#issuecomment-739556901
-      clientsClaim: false
-    }
-  },
+  // // PWA module configuration: https://go.nuxtjs.dev/pwa
+  // pwa: {
+  //   icon: {
+  //     fileName: 'favicon.png'
+  //   },
+  //   manifest: {
+  //     lang: 'en',
+  //     name: 'WiseRead',
+  //     short_name: 'WiseRead',
+  //     description: 'Online/Offline web comic reader',
+  //   },
+  //   workbox: {
+  //     // See https://github.com/nuxt-community/pwa-module/issues/176#issuecomment-739556901
+  //     clientsClaim: false
+  //   }
+  // },
 
   router: {
     // If available, add the name of the repo to the router.base
