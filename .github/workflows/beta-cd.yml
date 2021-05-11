@@ -11,7 +11,7 @@ jobs:
 
     env:
       # In GH-Pages, router base is the repo name
-      NUXT_ROUTER_BASE: beta
+      NUXT_ROUTER_BASE: /beta/
       LAST_COMMIT_SHA: ${{ github.sha }}
       IS_BETA: true
 
