@@ -96,7 +96,8 @@ export default {
   // Value of this object is accessible from both client and server using $config
   // See https://nuxtjs.org/guide/runtime-config
   publicRuntimeConfig: {
-    LAST_COMMIT_SHA: process.env.LAST_COMMIT_SHA
+    LAST_COMMIT_SHA: process.env.LAST_COMMIT_SHA,
+    IS_BETA: process.env.IS_BETA || false,
   },
 
   generate: {

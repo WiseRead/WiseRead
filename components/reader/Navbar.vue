@@ -12,7 +12,7 @@
 
             <div>
               <div class="hidden md:block mr-5 select-none text-base">
-                WiseRead
+                WiseRead{{ $config.IS_BETA ?' Beta' : '' }}
               </div>
             </div>
             <div>
