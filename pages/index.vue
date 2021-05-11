@@ -10,13 +10,15 @@
         @filesUploaderChange="onFilesUploaderChange"
         @enterDownloadLink="enterDownloadLink"
       />
+      <ConfigLoader v-if="showConfigLoader" />
+
       <div
         v-show="this.$store.state.chapters.length > 0"
         class="keep-height flex flex-col justify-between"
       >
         <div>
           <ChaptersNav class="nav-x-padding" type="top" />
-          <Loader v-if="showLoader" class="text-center" />
+          <Loader v-if="showExtractionLoader" class="text-center" />
           <ProgressBar v-if="showProgressBar" :percent="this.$store.getters.currDownloadPercent" />
         </div>
 
@@ -40,10 +42,15 @@ import FileName from '~/lib/utils/FileName'
 import Sort from '~/lib/Sort'
 import DomImagesHelp from '~/lib/DomImagesHelp'
 import DropboxHelp from '~/lib/filehosts/DropboxHelp'
+import {
+  RawJsonSource, GistSource,
+  ConfigpathType, splitConfigpath, convertConfigToChapterLinks
+} from '~/lib/Configpath'
+
 import GoogleDriveHelp from '~/lib/filehosts/GoogleDriveHelp'
 import { WiseReadLink } from '~/lib/WiseReadLink'
 import { ArchiveError, ArchiveErrorTypeEnum } from '~/lib/utils/Archive'
-import { DownloadError, DownloadStatusEnum } from '~/lib/utils/Download'
+import { DownloadError, DownloadStatusEnum, PROXY_URL } from '~/lib/utils/Download'
 import {
   ComicSource,
   ComicSource_ImagesBlobs,
@@ -59,11 +66,17 @@ import _ from 'lodash'
 import ResizeObserver from 'resize-observer-polyfill'
 
 export default {
+  data () {
+    return {
+      showConfigLoader: false,
+    }
+  },
+
   computed: {
     /**
      * @return {boolean}
      */
-    showLoader () {
+    showExtractionLoader () {
       return this.$store.getters.currChapter?.chapterInfo?.isExtractingNow === true
     },
 
@@ -81,8 +94,8 @@ export default {
     const ro = new ResizeObserver(this.throttledHandleWindowResize).observe(document.body)
   },
 
-  mounted () {
-    this.$nextTick(function () {
+  async mounted () {
+    this.$nextTick(async function () {
       try {
         const urlStr = window.location.href
         const wrLink = new WiseReadLink(urlStr)
@@ -93,15 +106,34 @@ export default {
         this.$store.commit('setShowTopBlock', { showTopBlock: !wrLink.hideInput })
         this.$store.commit('setPreloadingNumber', { preloadingNumber: wrLink.preloading })
 
-        const chapterLinks = wrLink.chapterLinks
+        let chapterLinks = []
 
-        if (chapterLinks.length > 0) {
+        if (wrLink.chapterLinks.length > 0) {
+          chapterLinks = wrLink.chapterLinks
+        }
+        else if (wrLink.configpath) {
+          // If the loading time takes longer than expected, show ConfigLoader
+          let loadingConfig = true
+          setTimeout(() => {
+            if (loadingConfig) {
+              this.showConfigLoader = true
+            }
+          }, 1500)
+
+          chapterLinks = await this.readConfigpath(wrLink.configpath)
+          this.showConfigLoader = loadingConfig = false
+        }
+
+        if (chapterLinks?.length > 0) {
           this.loadDownloadLinks(chapterLinks, false, wrLink.cstart ?? 0)
         }
       }
       catch (err) {
-        console.error("Can't read url params")
+        this.putError("Can't read url params", err, false, true)
       }
+
+      // Just to make sure the Loader turned off
+      this.showConfigLoader = false
     })
   },
 
@@ -300,6 +332,42 @@ export default {
         this.putError('Loading error of inactive chapter', err, true, false)
       }
     },
+
+    /**
+     * @param {string} configpath - "type:value" string
+     *  (Example: 'gist:bcb9c0cc01f7058648a5e2fd95301ae2')
+     *
+     * @return {Promise<ChapterLink[]>}
+     */
+    async readConfigpath (configpath) {
+      /** @type {ChapterLink[]} */
+      let chapterLinks = []
+      const [type, value] = splitConfigpath(configpath)
+
+      if (type === ConfigpathType.GIST) {
+        const gistId = value
+        try {
+          const jsonData = await GistSource.getJSON(gistId)
+          chapterLinks = convertConfigToChapterLinks(jsonData)
+        }
+        catch (err) {
+          this.putError(`Can't load/parse config from gist ${gistId}`, err, false, true)
+        }
+      }
+      else if (type === ConfigpathType.RAWURL || type === ConfigpathType.GITIO) {
+        // Note: GITIO is not officially supported.
+        const rawUrl = (type === ConfigpathType.RAWURL) ? value : `${PROXY_URL}https://git.io/${value}`
+        try {
+          const jsonData = await RawJsonSource.getJSON(rawUrl)
+          chapterLinks = convertConfigToChapterLinks(jsonData)
+        }
+        catch (err) {
+          this.putError(`Can't load/parse config from ${rawUrl}`, err, false, true)
+        }
+      }
+
+      return chapterLinks
+    }
   },
 }
 </script>

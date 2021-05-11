@@ -27,11 +27,13 @@
       <br />
       Gather the download links you need, each link should be a direct link to one ZIP/CBZ file, and
       use the <NuxtLink to="/manage-link">Manage Link</NuxtLink> page to create and configure the final WiseRead link.
-      <span class="marked-block">
+      <span class="marked-block no-break">
         Example:
         <br />
         <a :href="exampleWRLink">{{ exampleWRLink }}</a>
       </span>
+      There's also an advanced option with an external config file.
+      <NuxtLink to="/doc/config-file">Read more</NuxtLink>.
     </p>
 
     <h2>Real examples</h2>

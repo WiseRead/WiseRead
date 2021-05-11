@@ -104,9 +104,7 @@ export default {
   },
 
   mounted () {
-    this.$nextTick(function () {
-      // Code that will run only after the entire view has been rendered
-
+    this.$nextTick(function () { // Code that will run only after the entire view has been rendered
       setInterval(() => { this.isFullscreen = DomUtils.isFullscreen() }, 1000)
     })
   },
