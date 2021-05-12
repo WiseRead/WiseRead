@@ -18,9 +18,7 @@
     <p>
       The config file is a JSON file that extend the <a
         href="https://www.reddit.com/r/manga/comments/mcicbp/sl_how_to_host_a_series_on_imgur_with_guyamoe/"
-      >Cubari format</a>.
-      <br />
-      (<NuxtLink to="/doc/cubari">What is Cubari?</NuxtLink>)
+      >Cubari format</a>. (<NuxtLink to="/doc/cubari">What is Cubari?</NuxtLink>)
     </p>
     <div class="highlight mt-5"><pre>{{ spec_cubariWithWR }}</pre></div>
     <p>
@@ -95,7 +93,7 @@
 
     <h2>Real examples</h2>
     <p>
-      <ul class="list-disc list-outside">
+      <ul class="lg:list-disc list-outside">
         <li v-for="(example, index) in realConfigExamples" :key="index" class="mb-2">
           <span>{{ example.name }}</span>
           <br />
