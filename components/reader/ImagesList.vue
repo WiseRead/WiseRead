@@ -2,33 +2,51 @@
   <div>
     <!-- ("images-list" class and "data-image-name" are used in DomImagesHelp) -->
     <div class="flex flex-col images-list" :class="{ 'separated': isSeparated }">
-      <img
-        v-for="({blobUrl, name}, index) of imagesBlobsURLs"
-        :key="blobUrl"
-        :src="blobUrl"
-        alt="missing image"
-        :data-image-name="name"
-        @load="onImageLoad($event, index, name)"
-        @error="replaceImageByDefault"
-      />
+      <div v-if="!isChapterError()">
+        <img
+          v-for="({blobUrl, name}, index) of imagesBlobsURLs"
+          :key="blobUrl"
+          :src="blobUrl"
+          alt="missing image"
+          :data-image-name="name"
+          @load="onImageLoad($event, index, name)"
+          @error.once="replaceImageByDefault"
+        />
+      </div>
+      <div v-else>
+        <IconErrorImg class="error-image" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 // @ts-ignore
-import errorImg from '~/assets/icons/image/image-times.svg'
+import IconErrorImg from '@/assets/icons/image/image-times.svg?inline'
+// @ts-ignore
+import errorImg from '~/assets/icons/image/image-times.svg' // (used in img src)
+
 import { ImagesModeEnum, Chapter } from '~/lib/models'
 import DomImagesHelp from '~/lib//DomImagesHelp'
 
 import _ from 'lodash'
 
 export default {
+  components: {
+    IconErrorImg,
+  },
+
   computed: {
+    /**
+     * @return {boolean}
+     */
     isSeparated () {
       return this.$store.state.imagesMode === ImagesModeEnum.SEPARATE
     },
 
+    /**
+     * @return {{blobUrl: string, name: string}[]}
+     */
     imagesBlobsURLs () {
       /** @type {Chapter?} */
       const currChapter = this.$store.getters.currChapter
@@ -36,11 +54,6 @@ export default {
       if ((!currChapter?.isPending()) && currChapter?.images) {
         return currChapter.images.filter((b) => b.data.size !== 0).map(
           (b) => { return { blobUrl: URL.createObjectURL(b.data), name: b.name } })
-      }
-
-      // When loading error, return invalid url to show error-image
-      if (currChapter?.isPending() && currChapter?.chapterInfo.isLoadingError) {
-        return [{ blobUrl: 'error', name: 'error' }]
       }
 
       return []
@@ -56,6 +69,15 @@ export default {
       e.target.src = errorImg
     },
 
+    /**
+     * @return {boolean}
+     */
+    isChapterError () {
+      /** @type {Chapter?} */
+      const currChapter = this.$store.getters.currChapter
+      return (currChapter?.isPending() && currChapter?.chapterInfo.isLoadingError) ?? false
+    },
+
     onImageLoad (evt, index, name) {
       URL.revokeObjectURL(evt.target.src)
       this.debouncedUpdateDomImagesData()
@@ -69,7 +91,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-img {
+img, svg {
   @apply mx-auto text-5xl select-none;
   box-shadow: -2px 0 0 0 rgb(0 0 0 / 18%), 2px 0 0 0 rgb(0 0 0 / 18%);
   text-align: center;
@@ -109,6 +131,7 @@ img {
     @apply border-2 mt-6 mb-8;
     width: 16%;
     transition: margin 0.2s;
+    font-size: 1.7rem;
 
     @screen md {
       @apply mt-5 mb-6;
