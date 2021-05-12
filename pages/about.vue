@@ -1,6 +1,6 @@
 <template>
   <div class="page doc-page">
-    <h1>About</h1>
+    <h1>{{ title }}</h1>
     <p>
       WiseRead was built for the community to enjoy.
       <br />
@@ -45,7 +45,7 @@
     </p>
 
     <h2>Read more</h2>
-    <NuxtLink to="/doc/get-direct-download-link">How to get a direct download link</NuxtLink>
+    <NuxtLink to="/doc/get-direct-download-link">How to get direct download link</NuxtLink>
     <br />
     <NuxtLink to="/doc/similar-projects">Similar projects</NuxtLink>
 
@@ -70,7 +70,17 @@ export default {
 
   data () {
     return {
+      title: 'About',
       exampleDirectLink: 'https://example.com/files/chapter.cbz',
+    }
+  },
+
+  /**
+   * @return {any}
+   */
+  head () {
+    return {
+      title: this.title,
     }
   },
 

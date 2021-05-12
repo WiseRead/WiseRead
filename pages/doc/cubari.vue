@@ -1,6 +1,6 @@
 <template>
   <div class="page doc-page">
-    <h2>What is Cubari?</h2>
+    <h2>{{ title }}</h2>
     <p>
       Cubari is another web comic reader.
       <br />
@@ -37,7 +37,17 @@ import { realConfigExamples } from '~/assets/examples/config'
 export default {
   data () {
     return {
+      title: 'What is Cubari?',
       cubariLinkExample: realConfigExamples[1].toCubariLink(),
+    }
+  },
+
+  /**
+   * @return {any}
+   */
+  head () {
+    return {
+      title: this.title,
     }
   },
 }
