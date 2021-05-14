@@ -21,8 +21,16 @@
               <div class="image-name">{{ currImageName }}</div>
             </div>
             <!-- Rigth side -->
-            <div class="pl-1">
-              <div class="scroll-up" @click="scrollToTop()">
+            <div class="pl-1 flex">
+              <button
+                v-if="currDownloadToDeviceFunc"
+                title="Download"
+                class="ml-1 mr-2 md:mr-3 focus:outline-none"
+                @click="downloadToDevice()"
+              >
+                <IconImport class="download-icon" />
+              </button>
+              <div title="Scroll up" class="scroll-up" @click="scrollToTop()">
                 <IconArrowUpLong class="scroll-up-icon" />
               </div>
             </div>
@@ -42,6 +50,8 @@ import IconBookBlack from '@/assets/icons/book/book_black.svg?inline'
 import IconArrowHeadUpThin from '@/assets/icons/arrows/arrowhead-up-thin.svg?inline'
 // @ts-ignore
 import IconArrowUpLong from '@/assets/icons/arrows/arrow-up-long.svg?inline'
+// @ts-ignore
+import IconImport from '@/assets/icons/import.svg?inline'
 
 import { StrUtils } from '~/lib/utils/StrUtils'
 
@@ -50,7 +60,8 @@ export default {
     IconImage,
     IconBookBlack,
     IconArrowHeadUpThin,
-    IconArrowUpLong
+    IconArrowUpLong,
+    IconImport
   },
 
   data () {
@@ -77,6 +88,13 @@ export default {
 
       return StrUtils.addLtrToString(finalCurrImageName)
     },
+
+    /**
+     * @return {(() => void)?}
+     */
+    currDownloadToDeviceFunc () {
+      return this.$store.getters.currChapter?.chapterInfo?.downloadToDeviceFunc
+    },
   },
 
   methods: {
@@ -93,6 +111,12 @@ export default {
         force: false,
       })
     },
+
+    downloadToDevice () {
+      if (this.currDownloadToDeviceFunc) {
+        this.currDownloadToDeviceFunc()
+      }
+    }
   }
 }
 </script>
@@ -157,6 +181,25 @@ export default {
 
   @screen md {
     width: 1.4rem;
+  }
+}
+
+.download-icon {
+  $transition-time: 0.1s;
+  transition: width $transition-time, color $transition-time;
+  width: 1.37rem;
+
+  @screen md {
+    width: 1.53rem;
+  }
+
+  &:hover {
+    @apply text-blue-400;
+    width: 1.39rem;
+
+    @screen md {
+      width: 1.55rem;
+    }
   }
 }
 
