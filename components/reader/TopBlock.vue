@@ -5,7 +5,14 @@
     <div id="topDrop" class="top-width">
       <span class="mt-5 mx-2">Drop images or zip/cbz files here</span>
       <div class="files-button-area">
-        <input id="filesUploader" class="files-button" type="file" multiple="multiple" @change="$emit('filesUploaderChange', $event)" />
+        <input
+          id="filesUploader"
+          class="files-button"
+          type="file"
+          accept=".zip,.cbz,image/*"
+          multiple="multiple"
+          @change="$emit('filesUploaderChange', $event)"
+        />
         <label for="filesUploader">Choose files</label>
       </div>
     </div>
