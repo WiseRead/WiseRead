@@ -54,15 +54,24 @@
     <NuxtLink to="/doc/similar-projects">Similar projects</NuxtLink>
 
     <h2 class="pt-3">Contact me</h2>
-    <p class="font-medium">
-      <IconMail class="w-5 mr-1 inline" /> noaragono15@gmail.com
-    </p>
+    <div class="contact-list">
+      <div>
+        <div class="icon"><IconDiscord class="inline" style="width: 1.125rem;" /></div>
+        <span><a href="https://discord.gg/cwTw8upByW">Discord server</a></span>
+      </div>
+      <div>
+        <div class="icon"><IconMail class="inline" /></div>
+        <span>noaragono15@gmail.com</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 // @ts-ignore
 import IconMail from '@/assets/icons/mail.svg?inline'
+// @ts-ignore
+import IconDiscord from '@/assets/icons/brands/discord.svg?inline'
 
 import { ChapterLink, ImagesModeEnum } from '~/lib/models'
 import { WiseReadLink } from '~/lib/WiseReadLink'
@@ -70,6 +79,7 @@ import { WiseReadLink } from '~/lib/WiseReadLink'
 export default {
   components: {
     IconMail,
+    IconDiscord,
   },
 
   data () {
@@ -147,3 +157,17 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.contact-list {
+  @apply font-medium;
+
+  & > div {
+    @apply flex;
+
+    .icon {
+      @apply w-5 mr-2 text-center;
+    }
+  }
+}
+</style>
