@@ -4,9 +4,12 @@
     <p>
       WiseRead was built for the community to enjoy.
       <br />
-      Just drag your local comic/manga/manhwa files and start to read.
+      To read without installation, to read without ads, and to encourage the use of ZIP and CBZ files.
+
+      <span class="small-br"></span>
+      Just drag your comic/manga/manhwa files and start to read,
       <br />
-      Also, you can use it as an "online reader" for your files, if you have their download link.
+      or use it as an "online reader" for your files, if you have their download link.
     </p>
 
     <h2>Supported files</h2>
@@ -33,7 +36,8 @@
         <a :href="exampleWRLink">{{ exampleWRLink }}</a>
       </span>
       There's also an advanced option with an external config file.
-      <NuxtLink to="/doc/config-file">Read more</NuxtLink>.
+      <br />
+      <NuxtLink to="/doc/config-file">Read about the config file</NuxtLink>.
     </p>
 
     <h2>Real examples</h2>
