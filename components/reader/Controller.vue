@@ -137,13 +137,13 @@ export default {
   .g-images-displayed & {
     opacity: 1;
     visibility: visible;
-  }
 
-  &.open-controller {
-    --controller-height: 3.6rem; // Height when opened
+    &.open-controller {
+      --controller-height: 3.6rem; // Height when opened
 
-    @screen md {
-      --controller-height: 4rem;
+      @screen md {
+        --controller-height: 4rem;
+      }
     }
   }
 }
