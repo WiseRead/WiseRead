@@ -28,6 +28,7 @@ export default {
     '~/assets/css/layouts.scss',
     '~/assets/css/transition.scss',
     '~/assets/css/page.scss',
+    '~/assets/css/scrollbar.scss',
   ],
 
   purgeCSS: {
