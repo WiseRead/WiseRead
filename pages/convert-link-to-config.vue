@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <h2>Convert WiseRead link to config file</h2>
+    <h2>{{ title }}</h2>
     Enter WiseRead link with chapters:
     <input
       v-model.trim="initialLink"
@@ -36,11 +36,21 @@ import stringify from 'json-stable-stringify'
 export default {
   data () {
     return {
+      title: 'Convert WiseRead link to config file',
       wrLink: new WiseReadLink(),
       initialLink: '',
 
       /** @type {number | string} */
       firstNumber: 1,
+    }
+  },
+
+  /**
+   * @return {any}
+   */
+  head () {
+    return {
+      title: this.title,
     }
   },
 

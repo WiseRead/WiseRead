@@ -306,7 +306,7 @@ export default {
       }
 
       // If the error came from the active chapter
-      if (index === this.$store.state.currChapterIndex) {
+      if (index === this.$store.state.currChapterIndex && loadingId === this.$store.state.currLoadingId) {
         if (err instanceof ArchiveError) {
           const archiveErrorType = err.archiveErrorType
 

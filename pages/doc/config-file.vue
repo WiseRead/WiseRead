@@ -1,6 +1,6 @@
 <template>
   <div class="page doc-page">
-    <h1>The config file</h1>
+    <h1>{{ title }}</h1>
     <p>
       You can create Online WiseRead Link with external config file.
       <br />
@@ -113,10 +113,20 @@ import { spec_cubariWithWR, example_WROnly, realConfigExamples } from '~/assets/
 export default {
   data () {
     return {
+      title: 'The config file',
       exampleConfigpath: 'rawurl:https://example.com/files/myconfig.json',
       spec_cubariWithWR: spec_cubariWithWR,
       example_WROnly: example_WROnly,
       realConfigExamples: realConfigExamples,
+    }
+  },
+
+  /**
+   * @return {any}
+   */
+  head () {
+    return {
+      title: this.title,
     }
   },
 

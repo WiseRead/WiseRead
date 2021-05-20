@@ -4,10 +4,10 @@
     <div class="empty-area"></div>
 
     <div class="wrapper">
-      <div class="open-close controller-bg-color" @click="toggleOpenClose()">
-        <IconArrowHeadUpThin class="open-close-icon" />
-      </div>
       <div class="wrapper-main controller-bg-color">
+        <div class="open-close controller-bg-color" @click="toggleOpenClose()">
+          <IconArrowHeadUpThin class="open-close-icon" />
+        </div>
         <div class="pt-3 pb-1 pl-2 md:pl-4 pr-2 md:pr-4 md:px-5 text-sm md:text-base text-left font-sans leading-snug">
           <div class="flex items-center justify-between">
             <div class="min-w-0">
@@ -21,8 +21,16 @@
               <div class="image-name">{{ currImageName }}</div>
             </div>
             <!-- Rigth side -->
-            <div class="pl-1">
-              <div class="scroll-up" @click="scrollToTop()">
+            <div class="pl-1 flex">
+              <button
+                v-if="currDownloadToDeviceFunc"
+                title="Download"
+                class="ml-1 mr-2 md:mr-3 focus:outline-none"
+                @click="downloadToDevice()"
+              >
+                <IconImport class="download-icon" />
+              </button>
+              <div title="Scroll up" class="scroll-up" @click="scrollToTop()">
                 <IconArrowUpLong class="scroll-up-icon" />
               </div>
             </div>
@@ -42,6 +50,8 @@ import IconBookBlack from '@/assets/icons/book/book_black.svg?inline'
 import IconArrowHeadUpThin from '@/assets/icons/arrows/arrowhead-up-thin.svg?inline'
 // @ts-ignore
 import IconArrowUpLong from '@/assets/icons/arrows/arrow-up-long.svg?inline'
+// @ts-ignore
+import IconImport from '@/assets/icons/import.svg?inline'
 
 import { StrUtils } from '~/lib/utils/StrUtils'
 
@@ -50,7 +60,8 @@ export default {
     IconImage,
     IconBookBlack,
     IconArrowHeadUpThin,
-    IconArrowUpLong
+    IconArrowUpLong,
+    IconImport
   },
 
   data () {
@@ -77,6 +88,13 @@ export default {
 
       return StrUtils.addLtrToString(finalCurrImageName)
     },
+
+    /**
+     * @return {(() => void)?}
+     */
+    currDownloadToDeviceFunc () {
+      return this.$store.getters.currChapter?.chapterInfo?.downloadToDeviceFunc
+    },
   },
 
   methods: {
@@ -93,6 +111,12 @@ export default {
         force: false,
       })
     },
+
+    downloadToDevice () {
+      if (this.currDownloadToDeviceFunc) {
+        this.currDownloadToDeviceFunc()
+      }
+    }
   }
 }
 </script>
@@ -113,13 +137,13 @@ export default {
   .g-images-displayed & {
     opacity: 1;
     visibility: visible;
-  }
 
-  &.open-controller {
-    --controller-height: 3.6rem; // Height when opened
+    &.open-controller {
+      --controller-height: 3.6rem; // Height when opened
 
-    @screen md {
-      --controller-height: 4rem;
+      @screen md {
+        --controller-height: 4rem;
+      }
     }
   }
 }
@@ -148,7 +172,7 @@ export default {
   }
 
   &:hover {
-    background-color: rgba(146, 141, 141, 0.753);
+    background-color: rgba(128, 123, 123, 0.71);
   }
 }
 
@@ -160,29 +184,47 @@ export default {
   }
 }
 
-.open-close {
-  @apply rounded-t-xl text-center cursor-pointer;
-  margin-left: 1.5rem;
-  height: 1.31rem;
-  width: 3.1rem;
+.download-icon {
+  transition: color 0.1s;
+  width: 1.32rem;
 
   @screen md {
+    width: 1.45rem;
+  }
+
+  &:hover {
+    @apply text-blue-400;
+  }
+}
+
+.open-close {
+  --open-close--height: 1.31rem;
+  --open-close--width: 3.1rem;
+
+  @apply rounded-t-xl text-center cursor-pointer;
+  margin-left: 1.5rem;
+  position: absolute;
+  top: calc(var(--open-close--height) * -1);
+  height: var(--open-close--height);
+  width: var(--open-close--width);
+
+  @screen md {
+    --open-close--height: 1.25rem;
+    --open-close--width: 3.2rem;
     margin-left: 2rem;
-    width: 3.2rem;
-    height: 1.25rem;
   }
 }
 
 .open-close-icon {
   @apply inline transform rotate-0;
-  height: 0.92rem;
+  height: 0.99rem;
   margin-bottom: 0.07rem;
   transition: transform var(--open-controller-transition-time);
 
   @screen md {
     height: 1.2rem;
     padding: 0.04rem;
-    margin-bottom: 0.03rem;
+    margin-bottom: 0.08rem;
   }
 
   .open-controller & {

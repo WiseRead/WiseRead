@@ -1,6 +1,6 @@
 <template>
   <div class="page manage-link-page">
-    <h1>Manage Link</h1>
+    <h1>{{ title }}</h1>
     Create or edit your WiseRead Link. Select settings and add chapters.
     <div class="pt-3 pb-10 mb-10 border-b-2 border-separator-color">
       <h2>Edit old link</h2>
@@ -358,6 +358,8 @@ export default {
 
   data () {
     return {
+      title: 'Manage Link',
+
       wrLink: new WiseReadLink(),
 
       /** @type {ChapterLink[]} */
@@ -396,6 +398,15 @@ export default {
         { text: 'Raw URL', value: ConfigpathType.RAWURL },
         { text: 'Gist id', value: ConfigpathType.GIST },
       ],
+    }
+  },
+
+  /**
+   * @return {any}
+   */
+  head () {
+    return {
+      title: this.title,
     }
   },
 

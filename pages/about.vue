@@ -1,12 +1,15 @@
 <template>
   <div class="page doc-page">
-    <h1>About</h1>
+    <h1>{{ title }}</h1>
     <p>
       WiseRead was built for the community to enjoy.
       <br />
-      Just drag your local comic/manga/manhwa files and start to read.
+      To read without installation, to read without ads, and to encourage the use of ZIP and CBZ files.
+
+      <span class="small-br"></span>
+      Just drag your comic/manga/manhwa files and start to read,
       <br />
-      Also, you can use it as an "online reader" for your files, if you have their download link.
+      or use it as an "online reader" for your files, if you have their download link.
     </p>
 
     <h2>Supported files</h2>
@@ -33,7 +36,8 @@
         <a :href="exampleWRLink">{{ exampleWRLink }}</a>
       </span>
       There's also an advanced option with an external config file.
-      <NuxtLink to="/doc/config-file">Read more</NuxtLink>.
+      <br />
+      <NuxtLink to="/doc/config-file">Read about the config file</NuxtLink>.
     </p>
 
     <h2>Real examples</h2>
@@ -45,20 +49,29 @@
     </p>
 
     <h2>Read more</h2>
-    <NuxtLink to="/doc/get-direct-download-link">How to get a direct download link</NuxtLink>
+    <NuxtLink to="/doc/get-direct-download-link">How to get direct download link</NuxtLink>
     <br />
     <NuxtLink to="/doc/similar-projects">Similar projects</NuxtLink>
 
     <h2 class="pt-3">Contact me</h2>
-    <p class="font-medium">
-      <IconMail class="w-5 mr-1 inline" /> noaragono15@gmail.com
-    </p>
+    <div class="contact-list">
+      <div>
+        <div class="icon"><IconDiscord class="inline" style="width: 1.125rem;" /></div>
+        <span><a href="https://discord.gg/cwTw8upByW">Discord server</a></span>
+      </div>
+      <div>
+        <div class="icon"><IconMail class="inline" /></div>
+        <span>noaragono15@gmail.com</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 // @ts-ignore
 import IconMail from '@/assets/icons/mail.svg?inline'
+// @ts-ignore
+import IconDiscord from '@/assets/icons/brands/discord.svg?inline'
 
 import { ChapterLink, ImagesModeEnum } from '~/lib/models'
 import { WiseReadLink } from '~/lib/WiseReadLink'
@@ -66,11 +79,22 @@ import { WiseReadLink } from '~/lib/WiseReadLink'
 export default {
   components: {
     IconMail,
+    IconDiscord,
   },
 
   data () {
     return {
+      title: 'About',
       exampleDirectLink: 'https://example.com/files/chapter.cbz',
+    }
+  },
+
+  /**
+   * @return {any}
+   */
+  head () {
+    return {
+      title: this.title,
     }
   },
 
@@ -133,3 +157,17 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.contact-list {
+  @apply font-medium;
+
+  & > div {
+    @apply flex;
+
+    .icon {
+      @apply w-5 mr-2 text-center;
+    }
+  }
+}
+</style>

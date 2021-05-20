@@ -1,6 +1,6 @@
 <template>
   <div class="page doc-page">
-    <h2>What is Cubari?</h2>
+    <h2>{{ title }}</h2>
     <p>
       Cubari is another web comic reader.
       <br />
@@ -16,15 +16,14 @@
       <br />
       <br />
       <span class="font-semibold">Note:</span>
-      <ul class="list-disc max-w-2xl">
+      <ul class="list-disc -lg:ml-2 md:max-w-2xl">
         <li>
           WiseRead is not inspired by Cubari, and unlike Cubari WiseRead uses direct links to zip/cbz files
           and supports offline usage.
         </li>
         <li>
           You can use the same config file with WiseRead and Cubari.
-          <br />
-          <NuxtLink to="/doc/config-file">Read more about the config file</NuxtLink>.
+          <NuxtLink to="/doc/config-file">Read more</NuxtLink>.
         </li>
       </ul>
     </p>
@@ -37,7 +36,17 @@ import { realConfigExamples } from '~/assets/examples/config'
 export default {
   data () {
     return {
+      title: 'What is Cubari?',
       cubariLinkExample: realConfigExamples[1].toCubariLink(),
+    }
+  },
+
+  /**
+   * @return {any}
+   */
+  head () {
+    return {
+      title: this.title,
     }
   },
 }

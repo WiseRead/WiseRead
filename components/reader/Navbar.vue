@@ -17,7 +17,7 @@
             </div>
             <div>
               <div class="left-links">
-                <NuxtLink to="/" exact-path>Reader</NuxtLink>
+                <NuxtLink to="/" exact-path @click.native="onReaderClick">Reader</NuxtLink>
                 <NuxtLink to="/about">About</NuxtLink>
                 <NuxtLink to="/manage-link" class="hidden md:block">Manage Link</NuxtLink>
               </div>
@@ -35,6 +35,16 @@
     </nav>
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    onReaderClick (event) {
+      this.$store.commit('setShowTopBlock', { showTopBlock: true })
+    },
+  }
+}
+</script>
 
 <style scoped>
 .nav-background {
