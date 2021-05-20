@@ -4,10 +4,10 @@
     <div class="empty-area"></div>
 
     <div class="wrapper">
-      <div class="open-close controller-bg-color" @click="toggleOpenClose()">
-        <IconArrowHeadUpThin class="open-close-icon" />
-      </div>
       <div class="wrapper-main controller-bg-color">
+        <div class="open-close controller-bg-color" @click="toggleOpenClose()">
+          <IconArrowHeadUpThin class="open-close-icon" />
+        </div>
         <div class="pt-3 pb-1 pl-2 md:pl-4 pr-2 md:pr-4 md:px-5 text-sm md:text-base text-left font-sans leading-snug">
           <div class="flex items-center justify-between">
             <div class="min-w-0">
@@ -198,28 +198,33 @@ export default {
 }
 
 .open-close {
+  --open-close--height: 1.31rem;
+  --open-close--width: 3.1rem;
+
   @apply rounded-t-xl text-center cursor-pointer;
   margin-left: 1.5rem;
-  height: 1.31rem;
-  width: 3.1rem;
+  position: absolute;
+  top: calc(var(--open-close--height) * -1);
+  height: var(--open-close--height);
+  width: var(--open-close--width);
 
   @screen md {
+    --open-close--height: 1.25rem;
+    --open-close--width: 3.2rem;
     margin-left: 2rem;
-    width: 3.2rem;
-    height: 1.25rem;
   }
 }
 
 .open-close-icon {
   @apply inline transform rotate-0;
-  height: 0.92rem;
+  height: 0.99rem;
   margin-bottom: 0.07rem;
   transition: transform var(--open-controller-transition-time);
 
   @screen md {
     height: 1.2rem;
     padding: 0.04rem;
-    margin-bottom: 0.03rem;
+    margin-bottom: 0.08rem;
   }
 
   .open-controller & {
