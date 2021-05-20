@@ -185,21 +185,15 @@ export default {
 }
 
 .download-icon {
-  $transition-time: 0.1s;
-  transition: width $transition-time, color $transition-time;
-  width: 1.37rem;
+  transition: color 0.1s;
+  width: 1.32rem;
 
   @screen md {
-    width: 1.53rem;
+    width: 1.45rem;
   }
 
   &:hover {
     @apply text-blue-400;
-    width: 1.39rem;
-
-    @screen md {
-      width: 1.55rem;
-    }
   }
 }
 
