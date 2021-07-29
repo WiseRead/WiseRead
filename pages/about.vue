@@ -4,12 +4,15 @@
     <p>
       WiseRead was built for the community to enjoy.
       <br />
-      To read without installation, to read without ads, and to encourage the use of ZIP and CBZ files.
+      With WiseRead you can read your comic/manga/manhwa from any device
+      in the browser.
+      <br />
+      It's always free and without ads.
 
       <span class="small-br"></span>
-      Just drag your comic/manga/manhwa files and start to read,
+      Just drag files from your device and start to read,
       <br />
-      or use it as an "online reader" for your files, if you have their download link.
+      or use it as an "online reader" to stream chapters from the cloud.
     </p>
 
     <h2>Supported files</h2>
@@ -19,25 +22,24 @@
 
     <h2>Local usage</h2>
     <p>
-      Drag/Select one or multiple of your files.
+      Drag/Select one or multiple files.
       <br />
       The files can be chapter-files (ZIP/CBZ) or images.
     </p>
 
     <h2>Online Reader</h2>
     <p>
-      Create Online WiseRead Link and share it with your friends.
+      Create "Online WiseRead Link" and share it with your friends.
       <br />
-      Gather the download links you need, each link should be a direct link to one ZIP/CBZ file, and
-      use the <NuxtLink to="/manage-link">Manage Link</NuxtLink> page to create and configure the final WiseRead link.
+      1. Gather the download links you need - each link should be a direct link to one ZIP/CBZ file.
+      <br />
+      2. Use the <NuxtLink to="/manage-link">Manage Link</NuxtLink> page to create and configure the final WiseRead link.
       <span class="marked-block no-break">
         Example:
         <br />
         <a :href="exampleWRLink">{{ exampleWRLink }}</a>
       </span>
-      There's also an advanced option with an external config file.
-      <br />
-      <NuxtLink to="/doc/config-file">Read about the config file</NuxtLink>.
+      There's also <NuxtLink to="/doc/config-file">advanced option with external config file</NuxtLink>.
     </p>
 
     <h2>Real examples</h2>
