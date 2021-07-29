@@ -1,0 +1,22 @@
+{
+	// About workspace recommendations: https://go.microsoft.com/fwlink/?LinkId=827846
+
+	"recommendations": [
+		// Required:
+		"octref.vetur",
+		"dbaeumer.vscode-eslint",
+		"stylelint.vscode-stylelint",
+		// Recommended:
+		"bradlc.vscode-tailwindcss",
+		"dariofuzinato.vue-peek",
+		"formulahendry.auto-rename-tag",
+		"bierner.markdown-preview-github-styles",
+		"eamodio.gitlens",
+		"vscode-icons-team.vscode-icons",
+	],
+
+	// Extensions recommended by VS Code that should not be recommended
+	"unwantedRecommendations": [
+
+	]
+}
