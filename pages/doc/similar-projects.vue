@@ -2,7 +2,7 @@
   <div class="page doc-page">
     <h2>{{ title }}</h2>
     <p>
-      Here are some similar projects:
+      Projects similar to WiseRead:
     </p>
     <ul class="list-disc list-inside mt-2">
       <li><a href="https://villain.js.org">Villain</a></li>

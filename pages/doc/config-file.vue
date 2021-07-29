@@ -5,7 +5,7 @@
       You can create Online WiseRead Link with external config file.
       <br />
       This config file contains the chapter list and some settings, so when you want to
-      update the link you already shared and add new chapters, you just need to change the
+      update the WiseRead Link you already shared and add new chapters, you just need to change the
       config file and can leave the link unchanged.
       <span class="marked-block no-break">
         Example:
