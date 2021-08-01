@@ -6,8 +6,6 @@ With WiseRead you can read your comic from any device in the browser.
 Just drag files from your device and start to read,
 or use it as an "online reader" to stream chapters from the cloud.
 
-<!-- [Docs](https://wiseread.github.io/about) | [Example](https://wiseread.github.io/?imode=separate&chapterNames=Spy+X+Family+-+Prologue&download=https://www.dropbox.com/s/j4tab4xsrd2tax6/Chapter%2000%20Prologue.cbz?dl=0) -->
-
 Read more in the [Docs](https://wiseread.github.io/about).
 <br>
 Try [Example Chapter](https://wiseread.github.io/?imode=separate&chapterNames=Spy+X+Family+-+Prologue&download=https://www.dropbox.com/s/j4tab4xsrd2tax6/Chapter%2000%20Prologue.cbz?dl=0).
@@ -57,3 +55,13 @@ Use the `Extensions: Show Recommended Extensions` command to see the recommended
 
 ### Browser extension
 [Vue.js devtools for chrome](https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
+
+## Contributing
+### Branches
+* `dev`: The main branch. All development code is merged into `dev` in sometime.
+* `master`: Everything pushed to `master` updates the [real site](https://wiseread.github.io).
+* `beta`: Everything pushed to `beta` updates the [beta site](https://wiseread.github.io/beta).
+> **Tip:** To be sure the latest commit to `master` or `beta` has updated the site, open
+the site in the browser and open the DevTools Console. You will see a logged message:
+`LAST_COMMIT_SHA: <sha>`.</br>
+Just compare the `<sha>` to the latest commit in the `master`/`beta` branch.
