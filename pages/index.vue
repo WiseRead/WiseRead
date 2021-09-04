@@ -290,7 +290,10 @@ export default {
       const [type, value] = splitParamToTypeValue(source)
 
       if (type === RemoteSourceEnum.DROPBOX_FOLDER) {
-        return new ComicSource_DropboxFolder({ folderLink: value })
+        return new ComicSource_DropboxFolder({
+          folderLink: value,
+          accessToken: this.$config.DROPBOX_ACCESS_TOKEN
+        })
       }
 
       throw new Error('Remote source type is not supported')

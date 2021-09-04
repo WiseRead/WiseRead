@@ -17,6 +17,7 @@
     "@octokit/core": "^3.4.0",
     "@types/jquery": "^3.5.5",
     "core-js": "^3.8.3",
+    "dropbox": "^10.8.0",
     "jquery": "^3.5.1",
     "json-stable-stringify": "^1.0.1",
     "jszip": "^3.6.0",
