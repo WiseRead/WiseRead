@@ -234,8 +234,8 @@ import IconArrowCircleUp from '@/assets/icons/arrows/arrow-circle-up.svg?inline'
 import IconRightArrow from '@/assets/icons/arrows/arrowhead-right-outline.svg?inline'
 
 import { ChapterLink, ImagesModeEnum } from '~/lib/models'
-import { ConfigpathType, splitConfigpath } from '~/lib/Configpath'
-import { WiseReadLink, WiseReadParams, WISEREAD_ORIGIN, MAX_CHAPTER_NAME_LEN } from '~/lib/WiseReadLink'
+import { ConfigpathType } from '~/lib/Configpath'
+import { WiseReadLink, WiseReadParams, splitParamToTypeValue, WISEREAD_ORIGIN, MAX_CHAPTER_NAME_LEN } from '~/lib/WiseReadLink'
 import { VArray } from '~/lib/utils/VArray'
 import { StrUtils } from '~/lib/utils/StrUtils'
 import DomUtils from '~/lib/utils/DomUtils'
@@ -557,7 +557,7 @@ export default {
         this.cstart = ''
       }
       if (this.wrLink.configpath) {
-        const [configpathType, configpathValue] = splitConfigpath(this.wrLink.configpath)
+        const [configpathType, configpathValue] = splitParamToTypeValue(this.wrLink.configpath)
         this.selectedConfigpathType = configpathType
         this.configpathValue = configpathValue
         this.selectedChaptersInputMode = enum_ChaptersInputMode.CONFIG_FILE
