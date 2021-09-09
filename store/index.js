@@ -282,7 +282,7 @@ export const actions = {
     }) {
     commit('setOnChapterLoadingErrorFunction', { newFunc: onChapterLoadingError })
     this.$comicSource.updateSource(comicSource)
-    const streams = await comicSource.loadChaptersStreamsAsync()
+    const streams = await comicSource.getStreamsAsync()
 
     if (streams) {
       const tempChapters = streams.map((s) => s.streamedChapter)

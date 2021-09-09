@@ -14,6 +14,8 @@ jobs:
       NUXT_ROUTER_BASE: /beta/
       LAST_COMMIT_SHA: ${{ github.sha }}
       IS_BETA: true
+      # API
+      DROPBOX_ACCESS_TOKEN: ${{ secrets.DROPBOX_ACCESS_TOKEN }}
 
     steps:
       - name: Checkout

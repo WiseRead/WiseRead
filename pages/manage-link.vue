@@ -139,6 +139,26 @@
           <IconPlusCircle class="inline mr-2" style="width: 1.57rem;" />Add chapter
         </button>
       </div>
+      <div v-else-if="selectedChaptersInputMode === enum_ChaptersInputMode.REMOTE_SOURCE">
+        <div class="mt-5">
+          Enter folder link:
+          <input
+            v-model.trim="remoteSourceValue"
+            type="text"
+            placeholder="Folder link"
+            class="link-input mt-5"
+          />
+
+          <div class="mt-5">
+            Folder type:
+            <select v-model="selectedRemoteSourceType" class="select mt-1">
+              <option v-for="option in remoteSourceOptions" :key="option.value" :value="option.value">
+                {{ option.text }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
       <div v-else-if="selectedChaptersInputMode === enum_ChaptersInputMode.CONFIG_FILE">
         <div class="mt-5">
           <div class="mb-8 blockquote">
@@ -167,7 +187,7 @@
       </div>
 
       <div
-        v-if="chapterLinks.length > 1 || (cstart != '') || selectedChaptersInputMode === enum_ChaptersInputMode.CONFIG_FILE"
+        v-if="chapterLinks.length > 1 || (cstart != '') || selectedChaptersInputMode !== enum_ChaptersInputMode.CHAPTER_LIST"
         id="cstartArea"
         class="mt-8 mb-2 pt-3 border-t-2 border-separator-color"
       >
@@ -234,8 +254,9 @@ import IconArrowCircleUp from '@/assets/icons/arrows/arrow-circle-up.svg?inline'
 import IconRightArrow from '@/assets/icons/arrows/arrowhead-right-outline.svg?inline'
 
 import { ChapterLink, ImagesModeEnum } from '~/lib/models'
-import { ConfigpathType, splitConfigpath } from '~/lib/Configpath'
-import { WiseReadLink, WiseReadParams, WISEREAD_ORIGIN, MAX_CHAPTER_NAME_LEN } from '~/lib/WiseReadLink'
+import { ConfigpathType } from '~/lib/Configpath'
+import { RemoteSourceEnum } from '~/lib/models/RemoteSourceEnum'
+import { WiseReadLink, WiseReadParams, splitParamToTypeValue, WISEREAD_ORIGIN, MAX_CHAPTER_NAME_LEN } from '~/lib/WiseReadLink'
 import { VArray } from '~/lib/utils/VArray'
 import { StrUtils } from '~/lib/utils/StrUtils'
 import DomUtils from '~/lib/utils/DomUtils'
@@ -248,6 +269,7 @@ import _ from 'lodash'
  */
 const enum_ChaptersInputMode = {
   CHAPTER_LIST: 'Chapter List',
+  REMOTE_SOURCE: 'Folder',
   CONFIG_FILE: 'Config File',
 }
 
@@ -371,6 +393,8 @@ export default {
       enum_ChaptersInputMode: enum_ChaptersInputMode,
       selectedChaptersInputMode: enum_ChaptersInputMode.CHAPTER_LIST,
       configpathValue: '',
+      remoteSourceValue: '',
+      selectedRemoteSourceType: RemoteSourceEnum.DROPBOX_FOLDER,
       selectedConfigpathType: ConfigpathType.RAWURL,
 
       imagesModeOptions: [
@@ -392,6 +416,10 @@ export default {
         { text: '2 (Recommended)', value: 2 },
         { text: '1', value: 1 },
         { text: '0 (Less traffic but slow)', value: 0 },
+      ],
+
+      remoteSourceOptions: [
+        { text: 'Dropbox folder', value: RemoteSourceEnum.DROPBOX_FOLDER },
       ],
 
       configpathTypeOptions: [
@@ -464,7 +492,7 @@ export default {
      * @return {number}
      */
     maxCStart () {
-      if (this.selectedChaptersInputMode === enum_ChaptersInputMode.CONFIG_FILE) {
+      if (this.selectedChaptersInputMode !== enum_ChaptersInputMode.CHAPTER_LIST) {
         return 999999
       }
 
@@ -480,6 +508,13 @@ export default {
      */
     currConfigpathTypeAndValue () {
       return { type: this.selectedConfigpathType, value: this.configpathValue }
+    },
+
+    /**
+     * @return {{type: string, value: string }}
+     */
+    currRemoteSourceTypeAndValue () {
+      return { type: this.selectedRemoteSourceType, value: this.remoteSourceValue }
     },
   },
 
@@ -505,17 +540,25 @@ export default {
     selectedChaptersInputMode: {
       /** @param {enum_ChaptersInputMode} newMode */
       handler (newMode) {
+        this.wrLink._configpath = ''
+        this.wrLink._source = ''
+        this.wrLink._chapterLinks = []
+
         if (newMode === enum_ChaptersInputMode.CHAPTER_LIST) {
-          this.wrLink._configpath = ''
           this.wrLink._chapterLinks = this.chapterLinks
+
+          // Hide cstart input if equal to 1
           if (this.cstart === 1) {
             this.cstart = ''
           }
         }
+        else if (newMode === enum_ChaptersInputMode.REMOTE_SOURCE) {
+          this.wrLink._source = this.combineRemoteSourceTypeAndValue(
+            this.selectedRemoteSourceType, this.remoteSourceValue)
+        }
         else {
           this.wrLink._configpath = this.combineConfigpathTypeAndValue(
             this.selectedConfigpathType, this.configpathValue)
-          this.wrLink._chapterLinks = []
         }
       },
     },
@@ -525,6 +568,15 @@ export default {
       handler (configpathTypeAndValue) {
         this.wrLink._configpath = this.combineConfigpathTypeAndValue(
           configpathTypeAndValue.type, configpathTypeAndValue.value
+        )
+      },
+    },
+
+    currRemoteSourceTypeAndValue: {
+      /**  @param {{type: string, value: string }} remoteSourceTypeAndValue */
+      handler (remoteSourceTypeAndValue) {
+        this.wrLink._source = this.combineRemoteSourceTypeAndValue(
+          remoteSourceTypeAndValue.type, remoteSourceTypeAndValue.value
         )
       },
     },
@@ -556,8 +608,14 @@ export default {
       if (this.cstart === 1) {
         this.cstart = ''
       }
-      if (this.wrLink.configpath) {
-        const [configpathType, configpathValue] = splitConfigpath(this.wrLink.configpath)
+      if (this.wrLink.source) {
+        const [remoteSourceType, remoteSourceValue] = splitParamToTypeValue(this.wrLink.source)
+        this.selectedRemoteSourceType = remoteSourceType
+        this.remoteSourceValue = remoteSourceValue
+        this.selectedChaptersInputMode = enum_ChaptersInputMode.REMOTE_SOURCE
+      }
+      else if (this.wrLink.configpath) {
+        const [configpathType, configpathValue] = splitParamToTypeValue(this.wrLink.configpath)
         this.selectedConfigpathType = configpathType
         this.configpathValue = configpathValue
         this.selectedChaptersInputMode = enum_ChaptersInputMode.CONFIG_FILE
@@ -567,14 +625,29 @@ export default {
     },
 
     /**
-     * Return 'type:value', or empty no value
-     * @param {string} ConfigpathType
+     * Return 'type:value', or empty if no value
+     * @param {string} configpathType
      * @param {string} configpathValue
      * @return {string}
      */
-    combineConfigpathTypeAndValue (ConfigpathType, configpathValue) {
+    combineConfigpathTypeAndValue (configpathType, configpathValue) {
       if (configpathValue) {
-        return `${ConfigpathType}:${configpathValue}`
+        return `${configpathType}:${configpathValue}`
+      }
+      else {
+        return ''
+      }
+    },
+
+    /**
+     * Return 'type:value', or empty if no value
+     * @param {string} remoteSourceType
+     * @param {string} remoteSourceValue
+     * @return {string}
+     */
+    combineRemoteSourceTypeAndValue (remoteSourceType, remoteSourceValue) {
+      if (remoteSourceValue) {
+        return `${remoteSourceType}:${remoteSourceValue}`
       }
       else {
         return ''
@@ -590,8 +663,8 @@ export default {
         return new ChapterReport('name', 'error')
       }
 
-      // Ignore when in config mode
-      if (this.selectedChaptersInputMode === enum_ChaptersInputMode.CONFIG_FILE) {
+      // Ignore when not in chapter list mode
+      if (this.selectedChaptersInputMode !== enum_ChaptersInputMode.CHAPTER_LIST) {
         return new ChapterReport()
       }
 
@@ -654,8 +727,8 @@ export default {
         return new ChapterReport('link', 'error')
       }
 
-      // Ignore when in config mode
-      if (this.selectedChaptersInputMode === enum_ChaptersInputMode.CONFIG_FILE) {
+      // Ignore when not in chapter list mode
+      if (this.selectedChaptersInputMode !== enum_ChaptersInputMode.CHAPTER_LIST) {
         return new ChapterReport()
       }
 
@@ -896,6 +969,10 @@ $select-margin: 0.32rem;
 
   @screen -md {
     --labels-gap: 1rem;
+  }
+
+  @screen -sm {
+    @apply text-base;
   }
 }
 

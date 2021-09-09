@@ -17,7 +17,9 @@
 
     <h2>Supported files</h2>
     <p>
-      ZIP, CBZ, images.
+      <span class="pr-1">Chapter-files:</span> ZIP, CBZ
+      <br />
+      <span class="pr-1">Images:</span> All common formats (local usage only)
     </p>
 
     <h2>Local usage</h2>
@@ -28,19 +30,35 @@
     </p>
 
     <h2>Online Reader</h2>
-    <p>
-      Create "Online WiseRead Link" and share it with your friends.
+    Create "Online WiseRead Link" to let your friends read your comic online.
+    <br />
+    There are three types of WiseRead Link:
+    <span class="small-br"></span>
+    <code class="font-mono">Chapter List</code>
+    <br />
+    All download links are inside the url. Each link should be a direct link to one chapter-file.
+
+    <span class="small-br"></span>
+    <code class="font-mono">Folder</code>
+    <br />
+    Link to public Dropbox folder.
+
+    <span class="small-br"></span>
+    <code class="font-mono">Config File</code>
+    <br />
+    Advanced option with external config file. <NuxtLink to="/doc/config-file">Read more</NuxtLink>
+
+    <span class="small-br"></span>
+    <span class="marked-block">
+      Example:
       <br />
-      1. Gather the download links you need - each link should be a direct link to one ZIP/CBZ file.
-      <br />
-      2. Use the <NuxtLink to="/manage-link">Manage Link</NuxtLink> page to create and configure the final WiseRead link.
-      <span class="marked-block no-break">
-        Example:
-        <br />
-        <a :href="exampleWRLink">{{ exampleWRLink }}</a>
-      </span>
-      There's also <NuxtLink to="/doc/config-file">advanced option with external config file</NuxtLink>.
-    </p>
+      <a :href="exampleCListWRLink">{{ exampleCListWRLink }}</a>
+    </span>
+
+    <span class="small-br"></span>
+    <span class="small-br"></span>
+    Use the <NuxtLink to="/manage-link">Manage Link</NuxtLink> page
+    to create and configure the final WiseRead link.
 
     <h2>Real examples</h2>
     <p>
@@ -75,7 +93,7 @@ import IconMail from '@/assets/icons/mail.svg?inline'
 // @ts-ignore
 import IconDiscord from '@/assets/icons/brands/discord.svg?inline'
 
-import { ChapterLink, ImagesModeEnum } from '~/lib/models'
+import { ChapterLink, ImagesModeEnum, RemoteSourceEnum } from '~/lib/models'
 import { WiseReadLink } from '~/lib/WiseReadLink'
 
 export default {
@@ -104,7 +122,7 @@ export default {
     /**
      * @return {string}
      */
-    exampleWRLink () {
+    exampleCListWRLink () {
       return new WiseReadLink({
         chapterLinks: [new ChapterLink({ link: this.exampleDirectLink, name: '' })]
       }).toLink([])
@@ -140,6 +158,13 @@ export default {
           chapterLinks: [
             { name: 'Solo Leveling - Prologue', link: 'https://drive.google.com/file/d/1VbeoaVIGUin4ZMj4ycsI2qSMOXPXH2pW/view?usp=sharing' },
           ],
+          imode: ImagesModeEnum.CONTINUOUS,
+        },
+      },
+      {
+        exampleName: 'A Capable Maid (Webtoon, Dropbox Folder)',
+        data: {
+          source: `${RemoteSourceEnum.DROPBOX_FOLDER}:https://www.dropbox.com/sh/clpp6rglxsklgmb/AAADTG67_VJXWrJeczHKs2Sma?dl=0`,
           imode: ImagesModeEnum.CONTINUOUS,
         },
       }

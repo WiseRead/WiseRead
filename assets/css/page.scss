@@ -108,7 +108,7 @@ h1, h2, h3, h4, h5, h6 {
 
   // (Use with empty span)
   .small-br {
-    @apply block mt-2;
+    @apply flex mt-2;
   }
 
   .marked-link {

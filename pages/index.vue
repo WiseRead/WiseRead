@@ -44,11 +44,12 @@ import DomImagesHelp from '~/lib/DomImagesHelp'
 import DropboxHelp from '~/lib/filehosts/DropboxHelp'
 import {
   RawJsonSource, GistSource,
-  ConfigpathType, splitConfigpath, convertConfigToChapterLinks
+  ConfigpathType, parseConfigJson, ConfigpathData
 } from '~/lib/Configpath'
 
 import GoogleDriveHelp from '~/lib/filehosts/GoogleDriveHelp'
-import { WiseReadLink } from '~/lib/WiseReadLink'
+import { WiseReadLink, splitParamToTypeValue } from '~/lib/WiseReadLink'
+import { RemoteSourceEnum } from '~/lib/models/RemoteSourceEnum'
 import { ArchiveError, ArchiveErrorTypeEnum } from '~/lib/utils/Archive'
 import { DownloadError, DownloadStatusEnum, PROXY_URL } from '~/lib/utils/Download'
 import {
@@ -56,6 +57,7 @@ import {
   ComicSource_ImagesBlobs,
   ComicSource_ArchivesBlobs,
   ComicSource_DirectLinks,
+  ComicSource_DropboxFolder,
 } from '~/lib/ComicSource'
 import {
   ImageBlob,
@@ -106,27 +108,51 @@ export default {
         this.$store.commit('setShowTopBlock', { showTopBlock: !wrLink.hideInput })
         this.$store.commit('setPreloadingNumber', { preloadingNumber: wrLink.preloading })
 
-        let chapterLinks = []
+        // If the loading time takes longer than expected, show Loader
+        // (Probably when reading configpath or preparing Dropbox folder)
+        let loadingConfig = true
+        setTimeout(() => {
+          if (loadingConfig) {
+            this.showConfigLoader = true
+          }
+        }, 1500)
 
-        if (wrLink.chapterLinks.length > 0) {
-          chapterLinks = wrLink.chapterLinks
-        }
-        else if (wrLink.configpath) {
-          // If the loading time takes longer than expected, show ConfigLoader
-          let loadingConfig = true
-          setTimeout(() => {
-            if (loadingConfig) {
-              this.showConfigLoader = true
-            }
-          }, 1500)
+        /** @type {ComicSource=} */
+        let comicSource
 
-          chapterLinks = await this.readConfigpath(wrLink.configpath)
-          this.showConfigLoader = loadingConfig = false
+        // Try to create comicSource if preset in the url params
+        try {
+          if (wrLink.chapterLinks.length > 0) {
+            comicSource = this.createComicSourceFromDownloadLinks(wrLink.chapterLinks, false)
+          }
+          else if (wrLink.source) {
+            comicSource = this.createComicSourceFromRemoteSource(wrLink.source)
+          }
+          else if (wrLink.configpath) {
+            /** @type {ConfigpathData} */
+            const configpathData = await this.readConfigpath(wrLink.configpath)
+            const chapterLinks = configpathData.chapterLinks
+            comicSource = this.createComicSourceFromDownloadLinks(chapterLinks, false)
+          }
+        }
+        catch (err) {
+          this.putError(err.message, err, false, true)
         }
 
-        if (chapterLinks?.length > 0) {
-          this.loadDownloadLinks(chapterLinks, false, wrLink.cstart ?? 0)
+        // If comicSource created successfully from the url params
+        if (comicSource) {
+          try {
+            // Load streams now, when the Loader is still active
+            await comicSource.loadChaptersStreamsAsync()
+            this.updateStoreChapters(comicSource, wrLink.cstart ?? 0)
+          }
+          catch (err) {
+            this.putError("Can't load chapters", err, true, true)
+          }
         }
+
+        // Hide ConfigLoader if shown
+        this.showConfigLoader = loadingConfig = false
       }
       catch (err) {
         this.putError("Can't read url params", err, false, true)
@@ -166,7 +192,9 @@ export default {
 
     enterDownloadLink (downloadLink) {
       if (downloadLink) {
-        this.loadDownloadLinks([new ChapterLink({ name: 'Chapter', link: downloadLink })], true)
+        const oneChapterLink = [new ChapterLink({ name: 'Chapter', link: downloadLink })]
+        const comicSource = this.createComicSourceFromDownloadLinks(oneChapterLink, true)
+        this.updateStoreChapters(comicSource, 0)
       }
     },
 
@@ -192,36 +220,48 @@ export default {
     async loadLocalFiles (files) {
       if (files && files.length > 0) {
         this.scrollToTop()
-        const filesAsArray = Array.from(files)
 
-        // If one or more archives:
-        if (FileName.areAllArchives(filesAsArray.map((f) => f.name))) {
-          Sort.sortFiles(filesAsArray)
-          const comicSource = new ComicSource_ArchivesBlobs({ blobs: filesAsArray })
-
+        try {
+          const comicSource = this.createComicSourceFromLocalFiles(files)
           this.updateStoreChapters(comicSource)
         }
-        // If wrong files combination:
-        else if (FileName.areSomeArchives(filesAsArray.map((f) => f.name))) {
-          alert("You can't open zip/cbz files with other file types")
+        catch (err) {
+          alert(err.message)
         }
-        // If only images:
-        else {
-          const images = filesAsArray.map((o) => new ImageBlob({ data: o, name: o.name }))
-          Sort.sortChapterImages(images)
-          const comicSource = new ComicSource_ImagesBlobs({ imagesBlobs: images })
+      }
+    },
 
-          this.updateStoreChapters(comicSource)
-        }
+    /**
+     * @param {FileList} files
+     * @return {ComicSource}
+     */
+    createComicSourceFromLocalFiles (files) {
+      const filesAsArray = Array.from(files)
+
+      // If all are archives:
+      if (FileName.areAllArchives(filesAsArray.map((f) => f.name))) {
+        Sort.sortFiles(filesAsArray)
+        return new ComicSource_ArchivesBlobs({ blobs: filesAsArray })
+      }
+      // If wrong files combination:
+      else if (FileName.areSomeArchives(filesAsArray.map((f) => f.name))) {
+        throw new Error("You can't open zip/cbz files with other file types")
+      }
+      // If all are images:
+      else {
+        const images = filesAsArray.map((o) => new ImageBlob({ data: o, name: o.name }))
+        Sort.sortChapterImages(images)
+        return new ComicSource_ImagesBlobs({ imagesBlobs: images })
       }
     },
 
     /**
      * @param {ChapterLink[]} inChapterLinks
      * @param {boolean} inTryUseFileName
-     * @param {number=} inStartChapter
+     *
+     * @return {ComicSource_DirectLinks}
      */
-    async loadDownloadLinks (inChapterLinks, inTryUseFileName, inStartChapter = 0) {
+    createComicSourceFromDownloadLinks (inChapterLinks, inTryUseFileName) {
       console.log(`Download: ${JSON.stringify(inChapterLinks)}`)
 
       const chapterLinks = _.clone(inChapterLinks)
@@ -237,7 +277,26 @@ export default {
 
       const tryUseFileName = inTryUseFileName || anyChapterNameIsMissing
       const comicSource = new ComicSource_DirectLinks({ chapterLinks, tryUseFileName })
-      this.updateStoreChapters(comicSource, inStartChapter)
+
+      return comicSource
+    },
+
+    /**
+     * @param {string} source
+     * @return {ComicSource}
+     */
+    createComicSourceFromRemoteSource (source) {
+      console.log(`Download from source: ${source}`)
+      const [type, value] = splitParamToTypeValue(source)
+
+      if (type === RemoteSourceEnum.DROPBOX_FOLDER) {
+        return new ComicSource_DropboxFolder({
+          folderLink: value,
+          accessToken: this.$config.DROPBOX_ACCESS_TOKEN
+        })
+      }
+
+      throw new Error('Remote source type is not supported')
     },
 
     /**
@@ -337,21 +396,19 @@ export default {
      * @param {string} configpath - "type:value" string
      *  (Example: 'gist:bcb9c0cc01f7058648a5e2fd95301ae2')
      *
-     * @return {Promise<ChapterLink[]>}
+     * @return {Promise<ConfigpathData>}
      */
     async readConfigpath (configpath) {
-      /** @type {ChapterLink[]} */
-      let chapterLinks = []
-      const [type, value] = splitConfigpath(configpath)
+      const [type, value] = splitParamToTypeValue(configpath)
 
       if (type === ConfigpathType.GIST) {
         const gistId = value
         try {
           const jsonData = await GistSource.getJSON(gistId)
-          chapterLinks = convertConfigToChapterLinks(jsonData)
+          return parseConfigJson(jsonData)
         }
         catch (err) {
-          this.putError(`Can't load/parse config from gist ${gistId}`, err, false, true)
+          throw new Error(`Can't load/parse config from gist ${gistId}`)
         }
       }
       else if (type === ConfigpathType.RAWURL || type === ConfigpathType.GITIO) {
@@ -359,14 +416,14 @@ export default {
         const rawUrl = (type === ConfigpathType.RAWURL) ? value : `${PROXY_URL}https://git.io/${value}`
         try {
           const jsonData = await RawJsonSource.getJSON(rawUrl)
-          chapterLinks = convertConfigToChapterLinks(jsonData)
+          return parseConfigJson(jsonData)
         }
         catch (err) {
-          this.putError(`Can't load/parse config from ${rawUrl}`, err, false, true)
+          throw new Error(`Can't load/parse config from ${rawUrl}`)
         }
       }
 
-      return chapterLinks
+      throw new Error('Config type is not supported')
     }
   },
 }
