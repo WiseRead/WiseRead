@@ -1,11 +1,11 @@
 <template>
   <div class="page doc-page">
-    <h1>The config file</h1>
+    <h1>{{ title }}</h1>
     <p>
       You can create Online WiseRead Link with external config file.
       <br />
       This config file contains the chapter list and some settings, so when you want to
-      update the link you already shared and add new chapters, you just need to change the
+      update the WiseRead Link you already shared and add new chapters, you just need to change the
       config file and can leave the link unchanged.
       <span class="marked-block no-break">
         Example:
@@ -86,9 +86,9 @@
 
     <h2>Create config file from WiseRead link</h2>
     <p>
-      You can easily convert from normal 'Chapter List' WiseRead link to config file,
+      You can easily convert from simple 'Chapter List' WiseRead link to config file,
       <br />
-      with the <NuxtLink to="/convert-link-to-config">Convert WiseRead Link To Config File</NuxtLink> page.
+      using the <NuxtLink to="/convert-link-to-config">Convert WiseRead Link To Config File</NuxtLink> page.
     </p>
 
     <h2>Real examples</h2>
@@ -113,10 +113,20 @@ import { spec_cubariWithWR, example_WROnly, realConfigExamples } from '~/assets/
 export default {
   data () {
     return {
+      title: 'The config file',
       exampleConfigpath: 'rawurl:https://example.com/files/myconfig.json',
       spec_cubariWithWR: spec_cubariWithWR,
       example_WROnly: example_WROnly,
       realConfigExamples: realConfigExamples,
+    }
+  },
+
+  /**
+   * @return {any}
+   */
+  head () {
+    return {
+      title: this.title,
     }
   },
 

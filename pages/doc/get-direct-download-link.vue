@@ -1,6 +1,6 @@
 <template>
   <div class="page doc-page">
-    <h2>How to get a direct download link</h2>
+    <h2>{{ title }}</h2>
     <p>
       There are many ways to host chapters and get direct download links.
       <br />
@@ -80,3 +80,22 @@
     </p>
   </div>
 </template>
+
+<script>
+export default {
+  data () {
+    return {
+      title: 'How to get direct download link',
+    }
+  },
+
+  /**
+   * @return {any}
+   */
+  head () {
+    return {
+      title: this.title,
+    }
+  },
+}
+</script>

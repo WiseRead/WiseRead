@@ -28,6 +28,7 @@ export default {
     '~/assets/css/layouts.scss',
     '~/assets/css/transition.scss',
     '~/assets/css/page.scss',
+    '~/assets/css/scrollbar.scss',
   ],
 
   purgeCSS: {
@@ -102,6 +103,7 @@ export default {
   publicRuntimeConfig: {
     LAST_COMMIT_SHA: process.env.LAST_COMMIT_SHA,
     IS_BETA: process.env.IS_BETA || false,
+    DROPBOX_ACCESS_TOKEN: process.env.DROPBOX_ACCESS_TOKEN,
   },
 
   generate: {

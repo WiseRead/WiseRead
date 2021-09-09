@@ -13,7 +13,7 @@
         <IconLeftArrow class="arrow" />
       </div>
       <div class="chapter-title">
-        <div class="truncate"><div>{{ chapterName }}</div></div>
+        <div class="truncate"><div class="chapter-title-overflow hide-scrollbar">{{ chapterName }}</div></div>
 
         <div v-if="$store.state.chapters.length >= 2">
           <select v-model="selectedChapter" class="chapter-jump-select" @change="onChapterJump($event)">
@@ -238,6 +238,16 @@ $jump-button-width: 1rem;
 
   @screen md {
     font-size: 1.13rem;
+  }
+
+  .chapter-title-overflow {
+    @screen md {
+      @apply truncate;
+    }
+
+    @screen -md {
+      @apply overflow-x-auto;
+    }
   }
 }
 
