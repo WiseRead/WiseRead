@@ -18,6 +18,7 @@
     "noEmit": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
+    "useUnknownInCatchVariables": false,
     "baseUrl": ".",
     "paths": {
       "~/*": [

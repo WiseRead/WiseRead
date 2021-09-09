@@ -86,9 +86,9 @@
 
     <h2>Create config file from WiseRead link</h2>
     <p>
-      You can easily convert from normal 'Chapter List' WiseRead link to config file,
+      You can easily convert from simple 'Chapter List' WiseRead link to config file,
       <br />
-      with the <NuxtLink to="/convert-link-to-config">Convert WiseRead Link To Config File</NuxtLink> page.
+      using the <NuxtLink to="/convert-link-to-config">Convert WiseRead Link To Config File</NuxtLink> page.
     </p>
 
     <h2>Real examples</h2>

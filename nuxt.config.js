@@ -99,6 +99,7 @@ export default {
   publicRuntimeConfig: {
     LAST_COMMIT_SHA: process.env.LAST_COMMIT_SHA,
     IS_BETA: process.env.IS_BETA || false,
+    DROPBOX_ACCESS_TOKEN: process.env.DROPBOX_ACCESS_TOKEN,
   },
 
   generate: {
