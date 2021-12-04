@@ -6,7 +6,7 @@
       <br />
       This config file contains the chapter list and some settings, so when you want to
       update the WiseRead Link you already shared and add new chapters, you just need to change the
-      config file and can leave the link unchanged.
+      config file without touching the link.
       <span class="marked-block no-break">
         Example:
         <br />
@@ -18,7 +18,9 @@
     <p>
       The config file is a JSON file that extend the <a
         href="https://www.reddit.com/r/manga/comments/mcicbp/sl_how_to_host_a_series_on_imgur_with_guyamoe/"
-      >Cubari format</a>. (<NuxtLink to="/doc/cubari">What is Cubari?</NuxtLink>)
+      >Cubari format</a>. (See: <NuxtLink to="/doc/cubari">What is Cubari</NuxtLink>)
+      <br />
+      Each chapter in the config file has its <NuxtLink to="/doc/get-direct-download-link">direct download link</NuxtLink>.
     </p>
     <div class="highlight mt-5"><pre>{{ spec_cubariWithWR }}</pre></div>
     <p>
@@ -30,7 +32,7 @@
 
     <h2>Host</h2>
     <p>
-      WiseRead supports two types of hosts:
+      WiseRead supports two types of hosts for the config file:
       <br />
       <br />
       <span class="font-medium">Raw URL:</span>
@@ -78,7 +80,7 @@
 
     <h2>Create the WiseRead Link</h2>
     <p>
-      Enter the RawURL/GistId in the <NuxtLink to="/manage-link">Manage Link</NuxtLink> page
+      Enter the RawURL or GistId in the <NuxtLink to="/manage-link">Manage Link</NuxtLink> page
       under 'Config File', and copy the final link.
       <br />
       Note that unlike Cubari, WiseRead does not use <a href="https://git.io">git.io</a>.
@@ -86,12 +88,12 @@
 
     <h2>Create config file from WiseRead link</h2>
     <p>
-      You can easily convert from simple 'Chapter List' WiseRead link to config file,
+      You can easily convert from simple (and long) 'Chapter List' WiseRead link to config file,
       <br />
       using the <NuxtLink to="/convert-link-to-config">Convert WiseRead Link To Config File</NuxtLink> page.
     </p>
 
-    <h2>Real examples</h2>
+    <h2>Try examples</h2>
     <p>
       <ul class="lg:list-disc list-outside">
         <li v-for="(example, index) in realConfigExamples" :key="index" class="mb-2">

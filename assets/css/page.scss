@@ -118,7 +118,7 @@ h1, h2, h3, h4, h5, h6 {
 
   .blockquote {
     @apply block pl-5;
-    border-left-width: 5px;
+    border-left-width: 6px;
 
     .dark-mode & {
       @apply border-gray-700;
