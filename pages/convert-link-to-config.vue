@@ -10,7 +10,7 @@
       class="link-input"
     />
 
-    <div v-if="wrLink._chapterLinks.length > 0" class="mt-8">
+    <div v-if="isWRLinkEntered" class="mt-8">
       What is the number of the first chapter in the list?
       <input v-model.number="firstNumber" style="margin-top: 0.2rem;" class="input w-16 block" type="number" min="0" />
     </div>
@@ -19,7 +19,16 @@
       Config:
       <div class="highlight mt-2"><pre>{{ wrLinkToConfig || 'Empty' }}</pre></div>
     </div>
-    <div v-if="wrLink._chapterLinks.length > 0">
+    <div v-if="!isWRLinkEntered" class="my-8 italic">
+      Try example by
+      <button
+        class="underline italic mx-1 focus:outline-none cursor-pointer"
+        @click="initialLink = exampleLink"
+      >
+        Clicking Here
+      </button>
+    </div>
+    <div v-if="isWRLinkEntered">
       * Of course, you may want to edit the result.
     </div>
   </div>
@@ -39,6 +48,7 @@ export default {
       title: 'Convert WiseRead link to config file',
       wrLink: new WiseReadLink(),
       initialLink: '',
+      exampleLink: 'https://wiseread.github.io/?chapterNames=Ch+1,Ch+2&dlengths=38,38&download=https://example.com/files/chapter1.cbz,https://example.com/files/chapter2.cbz',
 
       /** @type {number | string} */
       firstNumber: 1,
@@ -55,6 +65,14 @@ export default {
   },
 
   computed: {
+    /**
+     * Check if the user entered WiseRead link with chapters
+     * @return {boolean}
+     */
+    isWRLinkEntered () {
+      return this.wrLink._chapterLinks.length > 0
+    },
+
     /**
      * Convert WiseReadLink to config.
      *
