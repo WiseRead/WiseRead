@@ -4,10 +4,9 @@
     <p>
       Cubari is another web comic reader.
       <br />
-      It takes images from other websites and displays them in a better manga-oriented reader.
+      It takes images from other websites and displays them in a manga-oriented reader.
       <br />
-      Cubari does not host any of the content, just like your computer does not store
-      or own all the images you see on the internet.
+      Like WiseRead, Cubari does not host any of the content.
       <br />
 
       <span class="small-br"></span>
@@ -18,7 +17,7 @@
       <span class="font-semibold">Note:</span>
       <ul class="list-disc -lg:ml-2 md:max-w-2xl">
         <li>
-          WiseRead is not inspired by Cubari, and unlike Cubari WiseRead uses direct links to zip/cbz files
+          WiseRead is not inspired by Cubari, and unlike Cubari WiseRead uses direct links to zip/cbz files,
           and supports offline usage.
         </li>
         <li>
