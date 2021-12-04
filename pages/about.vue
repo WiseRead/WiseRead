@@ -4,10 +4,10 @@
     <p>
       WiseRead was built for the community to enjoy.
       <br />
-      With WiseRead you can read your comic/manga/manhwa from any device
+      Now you can read your comic/manga/manhwa from any device
       in the browser.
       <br />
-      It's always free and without ads.
+      Always free and without ads.
 
       <span class="small-br"></span>
       Just drag files from your device and start to read,
@@ -34,17 +34,17 @@
     <br />
     There are three types of WiseRead Link:
     <span class="small-br"></span>
-    <code class="font-mono">Chapter List</code>
+    <code class="font-mono">Chapter List ></code>
     <br />
     All download links are inside the url. Each link should be a direct link to one chapter-file.
 
     <span class="small-br"></span>
-    <code class="font-mono">Folder</code>
+    <code class="font-mono">Folder ></code>
     <br />
     Link to public Dropbox folder.
 
     <span class="small-br"></span>
-    <code class="font-mono">Config File</code>
+    <code class="font-mono">Config File ></code>
     <br />
     Advanced option with external config file. <NuxtLink to="/doc/config-file">Read more</NuxtLink>
 
@@ -60,7 +60,7 @@
     Use the <NuxtLink to="/manage-link">Manage Link</NuxtLink> page
     to create and configure the final WiseRead link.
 
-    <h2>Real examples</h2>
+    <h2>Try examples</h2>
     <p>
       <span v-for="exam of realExamples" :key="exam.link">
         <a :href="exam.link">{{ exam.exampleName }}</a>
